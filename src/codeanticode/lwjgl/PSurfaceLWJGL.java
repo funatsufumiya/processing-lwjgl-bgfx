@@ -297,20 +297,25 @@ public class PSurfaceLWJGL implements PSurface {
   @Override
   public void selectFolder(String prompt, String defaultPath, File file, Object callback) {
       // TODO: Need implementation
+      PGraphics.showWarning("selectFolder() is not implemented for LWJGL yet");
   }
 
   @Override
   public void selectOutput(String prompt, String defaultPath, File file, Object callback) {
       // TODO: Need implementation
+      PGraphics.showWarning("selectOutput() is not implemented for LWJGL yet");
   }
   @Override
   public void selectInput(String prompt, String defaultPath, File file, Object callback) {
       // TODO: Need implementation
+      PGraphics.showWarning("selectInput() is not implemented for LWJGL yet");
   }
 
   @Override
   public boolean openLink(String url) {
       // TODO: Need implementation
+
+      PGraphics.showWarning("openLink() is not implemented for LWJGL yet");
 
       // if (Desktop.isDesktopSupported()) {
       //     try {
@@ -326,6 +331,8 @@ public class PSurfaceLWJGL implements PSurface {
   @Override
   public PImage loadImage(String path, Object... args) {
       // TODO: Need implementation
+      PGraphics.showWarning("loadImage() is not implemented for LWJGL yet");
+
       return null;
   }
 
