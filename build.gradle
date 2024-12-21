@@ -1,0 +1,45 @@
+plugins {
+    id 'java-library'
+}
+
+group 'com.example'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.5
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation fileTree(dir: 'lib', include: ['lwjgl-glfw.jar', 'lwjgl-opengl.jar', 'lwjgl.jar'])
+    implementation project(':processing-core')
+    testImplementation 'junit:junit:4.12'
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['src']
+        }
+        resources {
+            srcDirs = ['resources']
+        }
+    }
+    example {
+        java {
+            srcDirs = ['example']
+        }
+    }
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+tasks.register('buildExample', JavaCompile) {
+    source = sourceSets.example.java
+    classpath = sourceSets.main.runtimeClasspath
+    destinationDir = file("${buildDir}/classes/example")
+    options.encoding = 'UTF-8'
+}

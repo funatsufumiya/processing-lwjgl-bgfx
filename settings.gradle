@@ -1,0 +1,2 @@
+rootProject.name = 'processing-lwjgl'
+include 'processing-core'
