@@ -36,7 +36,8 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.BufferUtils;
@@ -1099,12 +1100,27 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("getString() unimplemented for BGFX");
   }
 
-  public static Logger getLogger() {
-    return Logger.getLogger("PLWJGL");
-  }
+  // public static Logger getLogger() {
+  //   return Logger.getLogger("PLWJGL");
+  // }
 
   public static void logWarning(String message) {
-    getLogger().warning(message);
+    // getLogger().warning(message);
+    PGraphics.showWarning("(PLWJGL) [Warn] " + message);
+  }
+
+  public static void logInfo(String message) {
+    // getLogger().info(message);
+    PGraphics.showWarning("(PLWJGL) [Info] " + message);
+  }
+
+  protected static Map<String, Boolean> warningMap = new HashMap<String, Boolean>();
+
+  public static void logWarningOnce(String onceKey, String message) {
+    if (!warningMap.containsKey(onceKey)) {
+      warningMap.put(onceKey, true);
+      logWarning(message);
+    }
   }
 
   ///////////////////////////////////////////////////////////
@@ -1117,7 +1133,8 @@ public class PLWJGL extends PGL {
 
     // throw new NotImplementedException("getError() unimplemented for BGFX");
 
-    logWarning("getError() currently does nothing in BGFX");
+    // logWarning("getError() currently does nothing in BGFX");
+    logWarningOnce("getError()", "getError() currently does nothing in BGFX");
 
     return 0;
   }
