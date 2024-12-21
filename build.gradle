@@ -43,3 +43,8 @@ tasks.register('buildExample', JavaCompile) {
     destinationDir = file("${buildDir}/classes/example")
     options.encoding = 'UTF-8'
 }
+
+task runExample(type: JavaExec) {
+    classpath = sourceSets.example.runtimeClasspath
+    main = 'com.example.Example'
+}
