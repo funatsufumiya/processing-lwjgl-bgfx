@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.GLFW_ALPHA_BITS;
@@ -147,10 +148,6 @@ import org.lwjgl.glfw.GLFWWindowFocusCallback;
 import org.lwjgl.glfw.GLFWWindowPosCallback;
 import org.lwjgl.glfw.GLFWWindowRefreshCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL21C;
-import org.lwjgl.opengl.GLDebugMessageCallback;
-import org.lwjgl.opengl.KHRDebug;
 import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -170,8 +167,10 @@ public class PSurfaceLWJGL implements PSurface {
 
   private static final boolean DEBUG_GLFW = false;
 
-  @SuppressWarnings("FieldCanBeLocal")
-  private GLDebugMessageCallback debugCallback;
+  // NOTE: begin commentout for BGFX
+  // @SuppressWarnings("FieldCanBeLocal")
+  // private GLDebugMessageCallback debugCallback;
+  // NOTE: end commentout for BGFX
 
   private PApplet sketch;
   private final PGraphics graphics;
@@ -1145,31 +1144,38 @@ public class PSurfaceLWJGL implements PSurface {
   }
 
   private void setupDebugOpenGLCallback() {
-    if (GL.getCapabilities().GL_KHR_debug) {
-      GL21C.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
-      GL21C.glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
-      debugCallback = GLDebugMessageCallback
-          .create((source, type, id, severity, length, message, userParam) -> {
-//            if (type == KHRDebug.GL_DEBUG_TYPE_ERROR ||
-//                type == KHRDebug.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR ||
-//                type == KHRDebug.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR ||
-//                type == KHRDebug.GL_DEBUG_TYPE_PORTABILITY) {
-//            }
-            new Exception(MemoryUtil.memUTF8(message)).printStackTrace();
-          });
-      KHRDebug.glDebugMessageCallback(debugCallback, 0);
-    }
+//     if (GL.getCapabilities().GL_KHR_debug) {
+//       GL21C.glEnable(KHRDebug.GL_DEBUG_OUTPUT);
+//       GL21C.glEnable(KHRDebug.GL_DEBUG_OUTPUT_SYNCHRONOUS);
+//       debugCallback = GLDebugMessageCallback
+//           .create((source, type, id, severity, length, message, userParam) -> {
+// //            if (type == KHRDebug.GL_DEBUG_TYPE_ERROR ||
+// //                type == KHRDebug.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR ||
+// //                type == KHRDebug.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR ||
+// //                type == KHRDebug.GL_DEBUG_TYPE_PORTABILITY) {
+// //            }
+//             new Exception(MemoryUtil.memUTF8(message)).printStackTrace();
+//           });
+//       KHRDebug.glDebugMessageCallback(debugCallback, 0);
+//     }
+
+    throw new NotImplementedException("setupDebugOpenGLCallback() unimplemented for BGFX");
   }
 
   @Override
   public void startThread() {
+
+    // throw new NotImplementedException("startThread() unimplemented for BGFX");
+
+    // // NOTE: begin commentout for BGFX
+    // /* 
 
     // TODO: Move OpenGL loop to another thread?
     // Adds a lot of complexity, but does not block event queue
 
     glfwMakeContextCurrent(window);
 
-    GL.createCapabilities();
+    // GL.createCapabilities(); // commented out for BGFX
     pgl.setThread(Thread.currentThread());
 
     if (DEBUG_GLFW) {
@@ -1203,6 +1209,9 @@ public class PSurfaceLWJGL implements PSurface {
     glfwTerminate();
 
     sketch.exitActual();
+
+    // */
+    // // NOTE: end commentout for BGFX
   }
 
 
