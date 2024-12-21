@@ -1,8 +1,13 @@
 ## Processing LWJGL BGFX Fork
 
-***WORK IN PROGRESS***
-
 This is based on [processing-lwjgl](https://github.com/codeanticode/processing-lwjgl)
+
+### Current Status
+
+- [x] `./gradlew runHelloBGFX` works (this don't use the Processing API)
+- [x] show blank window
+
+NOTE: Currently, most of the PLWJGL code is commented out, and throws `NotImplementedException` when called.
 
 ### Run
 
