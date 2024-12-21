@@ -31,7 +31,7 @@ dependencies {
 
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives2"
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives2"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives2"
     // runtimeOnly "org.lwjgl:lwjgl-bgfx::$lwjglNatives2"
 }
 
