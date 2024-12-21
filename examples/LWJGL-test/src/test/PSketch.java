@@ -5,10 +5,10 @@ import org.lwjgl.system.Platform;
 
 import codeanticode.lwjgl.PLWJGL;
 import processing.core.PApplet;
-import processing.opengl.PShader;
+// import processing.opengl.PShader;
 
 public class PSketch extends PApplet {
-  PShader blur;
+  // PShader blur;
   
   @Override
   public void settings() {
@@ -47,7 +47,7 @@ public class PSketch extends PApplet {
   // }
   
   public static void main(final String[] args) {    
-      // System.setProperty("org.lwjgl.util.Debug","true");
+      System.setProperty("org.lwjgl.util.Debug","true");
 
       // System.out.println("setting glfw_async");
 
