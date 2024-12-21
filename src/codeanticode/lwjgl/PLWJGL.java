@@ -1155,17 +1155,20 @@ public class PLWJGL extends PGL {
 
   @Override
   public void flush() {
-    glFlush();
+    // glFlush();
+    throw new NotImplementedException("flush() unimplemented for BGFX");
   }
 
   @Override
   public void finish() {
-    glFinish();
+    // glFinish();
+    throw new NotImplementedException("finish() unimplemented for BGFX");
   }
 
   @Override
   public void hint(int target, int hint) {
-    glHint(target, hint);
+    // glHint(target, hint);
+    throw new NotImplementedException("hint() unimplemented for BGFX");
   }
 
   ///////////////////////////////////////////////////////////
@@ -1174,65 +1177,75 @@ public class PLWJGL extends PGL {
 
   @Override
   public void enable(int value) {
-    if (-1 < value) {
-      glEnable(value);
-    }
+    // if (-1 < value) {
+    //   glEnable(value);
+    // }
+    throw new NotImplementedException("enable() unimplemented for BGFX");
   }
 
   @Override
   public void disable(int value) {
-    if (-1 < value) {
-      glDisable(value);
-    }
+    // if (-1 < value) {
+    //   glDisable(value);
+    // }
+    throw new NotImplementedException("disable() unimplemented for BGFX");
   }
 
   @Override
   public void getBooleanv(int value, IntBuffer data) {
-    // TODO: needs change to ByteBuffer, should have a variant which returns
-    //       a single boolean via 'glGetBoolean(int pname)'
-    if (-1 < value) {
-      if (byteBuffer.capacity() < data.capacity()) {
-        byteBuffer = allocateDirectByteBuffer(data.capacity());
-      }
-      glGetBooleanv(value, byteBuffer);
-      for (int i = 0; i < data.capacity(); i++) {
-        data.put(i, byteBuffer.get(i));
-      }
-    } else {
-      fillIntBuffer(data, 0, data.capacity() - 1, 0);
-    }
+    // // TODO: needs change to ByteBuffer, should have a variant which returns
+    // //       a single boolean via 'glGetBoolean(int pname)'
+    // if (-1 < value) {
+    //   if (byteBuffer.capacity() < data.capacity()) {
+    //     byteBuffer = allocateDirectByteBuffer(data.capacity());
+    //   }
+    //   glGetBooleanv(value, byteBuffer);
+    //   for (int i = 0; i < data.capacity(); i++) {
+    //     data.put(i, byteBuffer.get(i));
+    //   }
+    // } else {
+    //   fillIntBuffer(data, 0, data.capacity() - 1, 0);
+    // }
+
+    throw new NotImplementedException("getBooleanv() unimplemented for BGFX");
   }
 
   @Override
   public void getIntegerv(int value, IntBuffer data) {
-    // TODO: should have variant which returns a single int via
-    //       'glGetInteger(int pname)'
-    if (-1 < value) {
-      glGetIntegerv(value, data);
-    } else {
-      fillIntBuffer(data, 0, data.capacity() - 1, 0);
-    }
+    // // TODO: should have variant which returns a single int via
+    // //       'glGetInteger(int pname)'
+    // if (-1 < value) {
+    //   glGetIntegerv(value, data);
+    // } else {
+    //   fillIntBuffer(data, 0, data.capacity() - 1, 0);
+    // }
+
+    throw new NotImplementedException("getIntegerv() unimplemented for BGFX");
   }
 
   @Override
   public void getFloatv(int value, FloatBuffer data) {
-    // TODO: should have variant which returns a single float via
-    //       'glGetFloat(int pname)'
-    if (-1 < value) {
-      glGetFloatv(value, data);
-    } else {
-      fillFloatBuffer(data, 0, data.capacity() - 1, 0);
-    }
+    // // TODO: should have variant which returns a single float via
+    // //       'glGetFloat(int pname)'
+    // if (-1 < value) {
+    //   glGetFloatv(value, data);
+    // } else {
+    //   fillFloatBuffer(data, 0, data.capacity() - 1, 0);
+    // }
+
+    throw new NotImplementedException("getFloatv() unimplemented for BGFX");
   }
 
   @Override
   public boolean isEnabled(int value) {
-    return glIsEnabled(value);
+    // return glIsEnabled(value);
+    throw new NotImplementedException("isEnabled() unimplemented for BGFX");
   }
 
   @Override
   public String getString(int name) {
-    return glGetString(name);
+    // return glGetString(name);
+    throw new NotImplementedException("getString() unimplemented for BGFX");
   }
 
   ///////////////////////////////////////////////////////////
@@ -1241,7 +1254,8 @@ public class PLWJGL extends PGL {
 
   @Override
   public int getError() {
-    return glGetError();
+    // return glGetError();
+    throw new NotImplementedException("getError() unimplemented for BGFX");
   }
 
   @Override
@@ -1266,94 +1280,109 @@ public class PLWJGL extends PGL {
 
   @Override
   public void genBuffers(int n, IntBuffer buffers) {
-    buffers.limit(n); // TODO: caller should set the position and the limit
-    glGenBuffers(buffers);
-    buffers.limit(buffers.capacity());
+    // buffers.limit(n); // TODO: caller should set the position and the limit
+    // glGenBuffers(buffers);
+    // buffers.limit(buffers.capacity());
+
+    throw new NotImplementedException("genBuffers() unimplemented for BGFX");
   }
 
   @Override
   public void deleteBuffers(int n, IntBuffer buffers) {
-    buffers.limit(n); // TODO: caller should set the position and the limit
-    glDeleteBuffers(buffers);
-    buffers.limit(buffers.capacity());
+    // buffers.limit(n); // TODO: caller should set the position and the limit
+    // glDeleteBuffers(buffers);
+    // buffers.limit(buffers.capacity());
+
+    throw new NotImplementedException("deleteBuffers() unimplemented for BGFX");
   }
 
   @Override
   public void bindBuffer(int target, int buffer) {
-    glBindBuffer(target, buffer);
+    // glBindBuffer(target, buffer);
+    throw new NotImplementedException("bindBuffer() unimplemented for BGFX");
   }
 
   @Override
   public void bufferData(int target, int size, Buffer data, int usage) {
-    // TODO: caller should set the position and the limit
-    // TODO: This needs overloads for each buffer type
-    if (data == null) {
-      glBufferData(target, size, usage);
-    } else {
-      if (data instanceof FloatBuffer) {
-        data.limit(data.position() + size / Float.BYTES);
-        glBufferData(target, (FloatBuffer) data, usage);
-      } else if (data instanceof IntBuffer) {
-        data.limit(data.position() + size / Integer.BYTES);
-        glBufferData(target, (IntBuffer) data, usage);
-      } else if (data instanceof ByteBuffer) {
-        data.limit(data.position() + size);
-        glBufferData(target, (ByteBuffer) data, usage);
-      } else if (data instanceof ShortBuffer) {
-        data.limit(data.position() + size / Short.BYTES);
-        glBufferData(target, (ShortBuffer) data, usage);
-      }
-      data.limit(data.capacity());
-    }
+    // // TODO: caller should set the position and the limit
+    // // TODO: This needs overloads for each buffer type
+    // if (data == null) {
+    //   glBufferData(target, size, usage);
+    // } else {
+    //   if (data instanceof FloatBuffer) {
+    //     data.limit(data.position() + size / Float.BYTES);
+    //     glBufferData(target, (FloatBuffer) data, usage);
+    //   } else if (data instanceof IntBuffer) {
+    //     data.limit(data.position() + size / Integer.BYTES);
+    //     glBufferData(target, (IntBuffer) data, usage);
+    //   } else if (data instanceof ByteBuffer) {
+    //     data.limit(data.position() + size);
+    //     glBufferData(target, (ByteBuffer) data, usage);
+    //   } else if (data instanceof ShortBuffer) {
+    //     data.limit(data.position() + size / Short.BYTES);
+    //     glBufferData(target, (ShortBuffer) data, usage);
+    //   }
+    //   data.limit(data.capacity());
+    // }
+
+    throw new NotImplementedException("bufferData() unimplemented for BGFX");
   }
 
   @Override
   public void bufferSubData(int target, int offset, int size, Buffer data) {
-    // TODO: caller should set the position and the limit
-    // TODO: This needs overloads for each buffer type
-    if (data instanceof FloatBuffer) {
-      data.limit(data.position() + size / Float.BYTES);
-      glBufferSubData(target, offset, (FloatBuffer) data);
-    } else if (data instanceof IntBuffer) {
-      data.limit(data.position() + size / Integer.BYTES);
-      glBufferSubData(target, offset, (IntBuffer) data);
-    } else if (data instanceof ByteBuffer) {
-      data.limit(data.position() + size);
-      glBufferSubData(target, offset, (ByteBuffer) data);
-    } else if (data instanceof ShortBuffer) {
-      data.limit(data.position() + size / Short.BYTES);
-      glBufferSubData(target, offset, (ShortBuffer) data);
-    }
-    data.limit(data.capacity());
+    // // TODO: caller should set the position and the limit
+    // // TODO: This needs overloads for each buffer type
+    // if (data instanceof FloatBuffer) {
+    //   data.limit(data.position() + size / Float.BYTES);
+    //   glBufferSubData(target, offset, (FloatBuffer) data);
+    // } else if (data instanceof IntBuffer) {
+    //   data.limit(data.position() + size / Integer.BYTES);
+    //   glBufferSubData(target, offset, (IntBuffer) data);
+    // } else if (data instanceof ByteBuffer) {
+    //   data.limit(data.position() + size);
+    //   glBufferSubData(target, offset, (ByteBuffer) data);
+    // } else if (data instanceof ShortBuffer) {
+    //   data.limit(data.position() + size / Short.BYTES);
+    //   glBufferSubData(target, offset, (ShortBuffer) data);
+    // }
+    // data.limit(data.capacity());
+
+    throw new NotImplementedException("bufferSubData() unimplemented for BGFX");
   }
 
   @Override
   public void isBuffer(int buffer) {
-    glIsBuffer(buffer);
+    // glIsBuffer(buffer);
+    throw new NotImplementedException("isBuffer() unimplemented for BGFX");
   }
 
   @Override
   public void getBufferParameteriv(int target, int value, IntBuffer data) {
-    if (-1 < value) {
-      glGetBufferParameteriv(target, value, data);
-    } else {
-      data.put(0, 0);
-    }
+    // if (-1 < value) {
+    //   glGetBufferParameteriv(target, value, data);
+    // } else {
+    //   data.put(0, 0);
+    // }
+
+    throw new NotImplementedException("getBufferParameteriv() unimplemented for BGFX");
   }
 
   @Override
   public ByteBuffer mapBuffer(int target, int access) {
-    return glMapBuffer(target, access);
+    // return glMapBuffer(target, access);
+    throw new NotImplementedException("mapBuffer() unimplemented for BGFX");
   }
 
   @Override
   public ByteBuffer mapBufferRange(int target, int offset, int length, int access) {
-    return ARBMapBufferRange.glMapBufferRange(target, offset, length, access);
+    // return ARBMapBufferRange.glMapBufferRange(target, offset, length, access);
+    throw new NotImplementedException("mapBufferRange() unimplemented for BGFX");
   }
 
   @Override
   public void unmapBuffer(int target) {
-    glUnmapBuffer(target);
+    // glUnmapBuffer(target);
+    throw new NotImplementedException("unmapBuffer() unimplemented for BGFX");
   }
 
 
@@ -1363,19 +1392,22 @@ public class PLWJGL extends PGL {
 
   @Override
   public long fenceSync(int condition, int flags) {
-    return glFenceSync(condition, flags);
+    // return glFenceSync(condition, flags);
+    throw new NotImplementedException("fenceSync() unimplemented for BGFX");
   }
 
 
   @Override
   public void deleteSync(long sync) {
-    glDeleteSync(sync);
+    // glDeleteSync(sync);
+    throw new NotImplementedException("deleteSync() unimplemented for BGFX");
   }
 
 
   @Override
   public int clientWaitSync(long sync, int flags, long timeout) {
-    return glClientWaitSync(sync, flags, timeout);
+    // return glClientWaitSync(sync, flags, timeout);
+    throw new NotImplementedException("clientWaitSync() unimplemented for BGFX");
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1384,18 +1416,23 @@ public class PLWJGL extends PGL {
 
   @Override
   public void depthRangef(float n, float f) {
-    glDepthRange(n, f);
+    // glDepthRange(n, f);
+    throw new NotImplementedException("depthRangef() unimplemented for BGFX");
   }
 
   @Override
   public void viewport(int x, int y, int w, int h) {
-    float f = getPixelScale();
-    viewportImpl((int)(f*x), (int)(f*y), (int)(f*w), (int)(f*h));
+    // float f = getPixelScale();
+    // viewportImpl((int)(f*x), (int)(f*y), (int)(f*w), (int)(f*h));
+
+    throw new NotImplementedException("viewport() unimplemented for BGFX");
   }
 
   @Override
   protected void viewportImpl(int x, int y, int w, int h) {
-    glViewport(x, y, w, h);
+    // glViewport(x, y, w, h);
+
+    throw new NotImplementedException("viewportImpl() unimplemented for BGFX");
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1404,15 +1441,19 @@ public class PLWJGL extends PGL {
 
   @Override
   protected void readPixelsImpl(int x, int y, int width, int height, int format, int type, Buffer buffer) {
-    // TODO: needs overloads for different buffers
-    glReadPixels(x, y, width, height, format, type, (IntBuffer)buffer);
+    // // TODO: needs overloads for different buffers
+    // glReadPixels(x, y, width, height, format, type, (IntBuffer)buffer);
+
+    throw new NotImplementedException("readPixelsImpl() unimplemented for BGFX");
   }
 
   @Override
   protected void readPixelsImpl(int x, int y, int width, int height, int format,
                                 int type, long offset) {
-    // TODO: used by async pixel reader, test if it works
-    glReadPixels(x, y, width, height, format, type, offset);
+    // // TODO: used by async pixel reader, test if it works
+    // glReadPixels(x, y, width, height, format, type, offset);
+
+    throw new NotImplementedException("readPixelsImpl() unimplemented for BGFX");
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1421,67 +1462,80 @@ public class PLWJGL extends PGL {
 
   @Override
   public void vertexAttrib1f(int index, float value) {
-    glVertexAttrib1f(index, value);
+    // glVertexAttrib1f(index, value);
+    throw new NotImplementedException("vertexAttrib1f() unimplemented for BGFX");
   }
 
   @Override
   public void vertexAttrib2f(int index, float value0, float value1) {
-    glVertexAttrib2f(index, value0, value1);
+    // glVertexAttrib2f(index, value0, value1);
+    throw new NotImplementedException("vertexAttrib2f() unimplemented for BGFX");
   }
 
   @Override
   public void vertexAttrib3f(int index, float value0, float value1, float value2) {
-    glVertexAttrib3f(index, value0, value1, value2);
+    // glVertexAttrib3f(index, value0, value1, value2);
+    throw new NotImplementedException("vertexAttrib3f() unimplemented for BGFX");
   }
 
   @Override
   public void vertexAttrib4f(int index, float value0, float value1, float value2, float value3) {
-    glVertexAttrib4f(index, value0, value1, value2, value3);
+    // glVertexAttrib4f(index, value0, value1, value2, value3);
+    throw new NotImplementedException("vertexAttrib4f() unimplemented for BGFX");
   }
 
   @Override
   public void vertexAttrib1fv(int index, FloatBuffer values) {
-    glVertexAttrib1fv(index, values);
+    // glVertexAttrib1fv(index, values);
+    throw new NotImplementedException("vertexAttrib1fv() unimplemented for BGFX");
   }
 
   @Override
   public void vertexAttrib2fv(int index, FloatBuffer values) {
-    glVertexAttrib2fv(index, values);
+    // glVertexAttrib2fv(index, values);
+    throw new NotImplementedException("vertexAttrib2fv() unimplemented for BGFX");
   }
 
   @Override
   public void vertexAttrib3fv(int index, FloatBuffer values) {
-    glVertexAttrib3fv(index, values);
+    // glVertexAttrib3fv(index, values);
+    throw new NotImplementedException("vertexAttrib3fv() unimplemented for BGFX");
   }
 
   @Override
   public void vertexAttrib4fv(int index, FloatBuffer values) {
-    glVertexAttrib4fv(index, values);
+    // glVertexAttrib4fv(index, values);
+    throw new NotImplementedException("vertexAttrib4fv() unimplemented for BGFX");
   }
 
   @Override
   public void vertexAttribPointer(int index, int size, int type, boolean normalized, int stride, int offset) {
-    glVertexAttribPointer(index, size, type, normalized, stride, offset);
+    // glVertexAttribPointer(index, size, type, normalized, stride, offset);
+    throw new NotImplementedException("vertexAttribPointer() unimplemented for BGFX");
   }
 
   @Override
   public void enableVertexAttribArray(int index) {
-    glEnableVertexAttribArray(index);
+    // glEnableVertexAttribArray(index);
+    throw new NotImplementedException("enableVertexAttribArray() unimplemented for BGFX");
   }
 
   @Override
   public void disableVertexAttribArray(int index) {
-    glDisableVertexAttribArray(index);
+    // glDisableVertexAttribArray(index);
+    throw new NotImplementedException("disableVertexAttribArray() unimplemented for BGFX");
   }
 
   @Override
   public void drawArraysImpl(int mode, int first, int count) {
-    glDrawArrays(mode, first, count);
+    // glDrawArrays(mode, first, count);
+    throw new NotImplementedException("drawArraysImpl() unimplemented for BGFX");
   }
 
   @Override
   public void drawElementsImpl(int mode, int count, int type, int offset) {
-    glDrawElements(mode, count, type, offset);
+    // glDrawElements(mode, count, type, offset);
+    throw new NotImplementedException("drawElementsImpl() unimplemented for BGFX");
   }
 
 //  @Override
@@ -1501,22 +1555,26 @@ public class PLWJGL extends PGL {
 
   @Override
   public void lineWidth(float width) {
-    glLineWidth(width);
+    // glLineWidth(width);
+    throw new NotImplementedException("lineWidth() unimplemented for BGFX");
   }
 
   @Override
   public void frontFace(int dir) {
-    glFrontFace(dir);
+    // glFrontFace(dir);
+    throw new NotImplementedException("frontFace() unimplemented for BGFX");
   }
 
   @Override
   public void cullFace(int mode) {
-    glCullFace(mode);
+    // glCullFace(mode);
+    throw new NotImplementedException("cullFace() unimplemented for BGFX");
   }
 
   @Override
   public void polygonOffset(float factor, float units) {
-    glPolygonOffset(factor, units);
+    // glPolygonOffset(factor, units);
+    throw new NotImplementedException("polygonOffset() unimplemented for BGFX");
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -1525,7 +1583,8 @@ public class PLWJGL extends PGL {
 
   @Override
   public void pixelStorei(int pname, int param) {
-    glPixelStorei(pname, param);
+    // glPixelStorei(pname, param);
+    throw new NotImplementedException("pixelStorei() unimplemented for BGFX");
   }
 
   ///////////////////////////////////////////////////////////
@@ -1534,95 +1593,116 @@ public class PLWJGL extends PGL {
 
   @Override
   public void texImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, Buffer data) {
-    // TODO: needs change to IntBuffer
-    glTexImage2D(target, level, internalFormat, width, height, border, format, type, (IntBuffer)data);
+    // // TODO: needs change to IntBuffer
+    // glTexImage2D(target, level, internalFormat, width, height, border, format, type, (IntBuffer)data);
+
+    throw new NotImplementedException("texImage2D() unimplemented for BGFX");
   }
 
   @Override
   public void copyTexImage2D(int target, int level, int internalFormat, int x, int y, int width, int height, int border) {
-    glCopyTexImage2D(target, level, internalFormat, x, y, width, height, border);
+    // glCopyTexImage2D(target, level, internalFormat, x, y, width, height, border);
+    throw new NotImplementedException("copyTexImage2D() unimplemented for BGFX");
   }
 
   @Override
   public void texSubImage2D(int target, int level, int xOffset, int yOffset, int width, int height, int format, int type, Buffer data) {
-    // TODO: needs change to IntBuffer
-    glTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, (IntBuffer)data);
+    // // TODO: needs change to IntBuffer
+    // glTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, (IntBuffer)data);
+
+    throw new NotImplementedException("texSubImage2D() unimplemented for BGFX");
   }
 
   @Override
   public void copyTexSubImage2D(int target, int level, int xOffset, int yOffset, int x, int y, int width, int height) {
-    glCopyTexSubImage2D(target, level, x, y, xOffset, yOffset, width, height);
+    // glCopyTexSubImage2D(target, level, x, y, xOffset, yOffset, width, height);
+    throw new NotImplementedException("copyTexSubImage2D() unimplemented for BGFX");
   }
 
   @Override
   public void compressedTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int imageSize, Buffer data) {
-    // TODO: needs change to ByteBuffer
-    glCompressedTexImage2D(target, level, internalFormat, width, height, border, (ByteBuffer)data);
+    // // TODO: needs change to ByteBuffer
+    // glCompressedTexImage2D(target, level, internalFormat, width, height, border, (ByteBuffer)data);
+
+    throw new NotImplementedException("compressedTexImage2D() unimplemented for BGFX");
   }
 
   @Override
   public void compressedTexSubImage2D(int target, int level, int xOffset, int yOffset, int width, int height, int format, int imageSize, Buffer data) {
-    glCompressedTexSubImage2D(target, level, xOffset, yOffset, width, height, format, (ByteBuffer)data);
+    // glCompressedTexSubImage2D(target, level, xOffset, yOffset, width, height, format, (ByteBuffer)data);
+    throw new NotImplementedException("compressedTexSubImage2D() unimplemented for BGFX");
   }
 
   @Override
   public void texParameteri(int target, int pname, int param) {
-    glTexParameteri(target, pname, param);
+    // glTexParameteri(target, pname, param);
+    throw new NotImplementedException("texParameteri() unimplemented for BGFX");
   }
 
   @Override
   public void texParameterf(int target, int pname, float param) {
-    glTexParameterf(target, pname, param);
+    // glTexParameterf(target, pname, param);
+    throw new NotImplementedException("texParameterf() unimplemented for BGFX");
   }
 
   @Override
   public void texParameteriv(int target, int pname, IntBuffer params) {
-    glTexParameteriv(target, pname, params);
+    // glTexParameteriv(target, pname, params);
+    throw new NotImplementedException("texParameteriv() unimplemented for BGFX");
   }
 
   @Override
   public void texParameterfv(int target, int pname, FloatBuffer params) {
-    glTexParameterfv(target, pname, params);
+    // glTexParameterfv(target, pname, params);
+    throw new NotImplementedException("texParameterfv() unimplemented for BGFX");
   }
 
   @Override
   public void generateMipmap(int target) {
-    glGenerateMipmap(target);
+    // glGenerateMipmap(target);
+    throw new NotImplementedException("generateMipmap() unimplemented for BGFX");
   }
 
   @Override
   public void genTextures(int n, IntBuffer textures) {
-    glGenTextures(textures);
+    // glGenTextures(textures);
+    throw new NotImplementedException("genTextures() unimplemented for BGFX");
   }
 
   @Override
   public void deleteTextures(int n, IntBuffer textures) {
-    glDeleteTextures(textures);
+    // glDeleteTextures(textures);
+    throw new NotImplementedException("deleteTextures() unimplemented for BGFX");
   }
 
   @Override
   public void getTexParameteriv(int target, int pname, IntBuffer params) {
-    glGetTexParameteriv(target, pname, params);
+    // glGetTexParameteriv(target, pname, params);
+    throw new NotImplementedException("getTexParameteriv() unimplemented for BGFX");
   }
 
   @Override
   public void getTexParameterfv(int target, int pname, FloatBuffer params) {
-    glGetTexParameterfv(target, pname, params);
+    // glGetTexParameterfv(target, pname, params);
+    throw new NotImplementedException("getTexParameterfv() unimplemented for BGFX");
   }
 
   @Override
   public boolean isTexture(int texture) {
-    return glIsTexture(texture);
+    // return glIsTexture(texture);
+    throw new NotImplementedException("isTexture() unimplemented for BGFX");
   }
 
   @Override
   protected void activeTextureImpl(int texture) {
-    glActiveTexture(texture);
+    // glActiveTexture(texture);
+    throw new NotImplementedException("activeTextureImpl() unimplemented for BGFX");
   }
 
   @Override
   protected void bindTextureImpl(int target, int texture) {
-    glBindTexture(target, texture);
+    // glBindTexture(target, texture);
+    throw new NotImplementedException("bindTextureImpl() unimplemented for BGFX");
   }
 
   ///////////////////////////////////////////////////////////
@@ -1631,228 +1711,280 @@ public class PLWJGL extends PGL {
 
   @Override
   public int createShader(int type) {
-    return glCreateShader(type);
+    // return glCreateShader(type);
+    throw new NotImplementedException("createShader() unimplemented for BGFX");
   }
 
   @Override
   public void shaderSource(int shader, String source) {
-    glShaderSource(shader, source);
+    // glShaderSource(shader, source);
+    throw new NotImplementedException("shaderSource() unimplemented for BGFX");
   }
 
   @Override
   public void compileShader(int shader) {
-    glCompileShader(shader);
+    // glCompileShader(shader);
+    throw new NotImplementedException("compileShader() unimplemented for BGFX");
   }
 
   @Override
   public void releaseShaderCompiler() {
-    glReleaseShaderCompiler();
+    // glReleaseShaderCompiler();
+    throw new NotImplementedException("releaseShaderCompiler() unimplemented for BGFX");
   }
 
   @Override
   public void deleteShader(int shader) {
-    glDeleteShader(shader);
+    // glDeleteShader(shader);
+    throw new NotImplementedException("deleteShader() unimplemented for BGFX");
   }
 
   @Override
   public void shaderBinary(int count, IntBuffer shaders, int binaryFormat, Buffer binary, int length) {
-    glShaderBinary(shaders, binaryFormat, (ByteBuffer) binary);
+    // glShaderBinary(shaders, binaryFormat, (ByteBuffer) binary);
+    throw new NotImplementedException("shaderBinary() unimplemented for BGFX");
   }
 
   @Override
   public int createProgram() {
-    return glCreateProgram();
+    // return glCreateProgram();
+    throw new NotImplementedException("createProgram() unimplemented for BGFX");
   }
 
   @Override
   public void attachShader(int program, int shader) {
-    glAttachShader(program, shader);
+    // glAttachShader(program, shader);
+    throw new NotImplementedException("attachShader() unimplemented for BGFX");
   }
 
   @Override
   public void detachShader(int program, int shader) {
-    glDetachShader(program, shader);
+    // glDetachShader(program, shader);
+    throw new NotImplementedException("detachShader() unimplemented for BGFX");
   }
 
   @Override
   public void linkProgram(int program) {
-    glLinkProgram(program);
+    // glLinkProgram(program);
+    throw new NotImplementedException("linkProgram() unimplemented for BGFX");
   }
 
   @Override
   public void useProgram(int program) {
-    glUseProgram(program);
+    // glUseProgram(program);
+    throw new NotImplementedException("useProgram() unimplemented for BGFX");
   }
 
   @Override
   public void deleteProgram(int program) {
-    glDeleteProgram(program);
+    // glDeleteProgram(program);
+    throw new NotImplementedException("deleteProgram() unimplemented for BGFX");
   }
 
   @Override
   public String getActiveAttrib(int program, int index, IntBuffer size, IntBuffer type) {
-    return glGetActiveAttrib(program, index, size, type);
+    // return glGetActiveAttrib(program, index, size, type);
+    throw new NotImplementedException("getActiveAttrib() unimplemented for BGFX");
   }
 
   @Override
   public int getAttribLocation(int program, String name) {
-    return glGetAttribLocation(program, name);
+    // return glGetAttribLocation(program, name);
+    throw new NotImplementedException("getAttribLocation() unimplemented for BGFX");
   }
 
   @Override
   public void bindAttribLocation(int program, int index, String name) {
-    glBindAttribLocation(program, index, name);
+    // glBindAttribLocation(program, index, name);
+    throw new NotImplementedException("bindAttribLocation() unimplemented for BGFX");
   }
 
   @Override
   public int getUniformLocation(int program, String name) {
-    return glGetUniformLocation(program, name);
+    // return glGetUniformLocation(program, name);
+    throw new NotImplementedException("getUniformLocation() unimplemented for BGFX");
   }
 
   @Override
   public String getActiveUniform(int program, int index, IntBuffer size, IntBuffer type) {
-//    IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
-//    String name = glGetActiveUniform(program, index, 256, typeTmp);
-//    type.put(typeTmp.get(0));
-//    return name;
-    return glGetActiveUniform(program, index, size, type);
+// //    IntBuffer typeTmp = BufferUtils.createIntBuffer(2);
+// //    String name = glGetActiveUniform(program, index, 256, typeTmp);
+// //    type.put(typeTmp.get(0));
+// //    return name;
+//     return glGetActiveUniform(program, index, size, type);
+
+    throw new NotImplementedException("getActiveUniform() unimplemented for BGFX");
   }
 
   @Override
   public void uniform1i(int location, int value) {
-    glUniform1i(location, value);
+    // glUniform1i(location, value);
+    throw new NotImplementedException("uniform1i() unimplemented for BGFX");
   }
 
   @Override
   public void uniform2i(int location, int value0, int value1) {
-    glUniform2i(location, value0, value1);
+    // glUniform2i(location, value0, value1);
+    throw new NotImplementedException("uniform2i() unimplemented for BGFX");
   }
 
   @Override
   public void uniform3i(int location, int value0, int value1, int value2) {
-    glUniform3i(location, value0, value1, value2);
+    // glUniform3i(location, value0, value1, value2);
+    throw new NotImplementedException("uniform3i() unimplemented for BGFX");
   }
 
   @Override
   public void uniform4i(int location, int value0, int value1, int value2, int value3) {
-    glUniform4i(location, value0, value1, value2, value3);
+    // glUniform4i(location, value0, value1, value2, value3);
+    throw new NotImplementedException("uniform4i() unimplemented for BGFX");
   }
 
   @Override
   public void uniform1f(int location, float value) {
-    glUniform1f(location, value);
+    // glUniform1f(location, value);
+    throw new NotImplementedException("uniform1f() unimplemented for BGFX");
   }
 
   @Override
   public void uniform2f(int location, float value0, float value1) {
-    glUniform2f(location, value0, value1);
+    // glUniform2f(location, value0, value1);
+    throw new NotImplementedException("uniform2f() unimplemented for BGFX");
   }
 
   @Override
   public void uniform3f(int location, float value0, float value1, float value2) {
-    glUniform3f(location, value0, value1, value2);
+    // glUniform3f(location, value0, value1, value2);
+    throw new NotImplementedException("uniform3f() unimplemented for BGFX");
   }
 
   @Override
   public void uniform4f(int location, float value0, float value1, float value2, float value3) {
-    glUniform4f(location, value0, value1, value2, value3);
+    // glUniform4f(location, value0, value1, value2, value3);
+    throw new NotImplementedException("uniform4f() unimplemented for BGFX");
   }
 
   @Override
   public void uniform1iv(int location, int count, IntBuffer v) {
-    v.limit(count); // TODO: caller should set the position and the limit
-    glUniform1iv(location, v);
-    v.limit(v.capacity());
+    // v.limit(count); // TODO: caller should set the position and the limit
+    // glUniform1iv(location, v);
+    // v.limit(v.capacity());
+
+    throw new NotImplementedException("uniform1iv() unimplemented for BGFX");
   }
 
   @Override
   public void uniform2iv(int location, int count, IntBuffer v) {
-    v.limit(2*count); // TODO: caller should set the position and the limit
-    glUniform2iv(location, v);
-    v.limit(v.capacity());
+    // v.limit(2*count); // TODO: caller should set the position and the limit
+    // glUniform2iv(location, v);
+    // v.limit(v.capacity());
+
+    throw new NotImplementedException("uniform2iv() unimplemented for BGFX");
   }
 
   @Override
   public void uniform3iv(int location, int count, IntBuffer v) {
-    v.limit(3*count); // TODO: caller should set the position and the limit
-    glUniform3iv(location, v);
-    v.limit(v.capacity());
+    // v.limit(3*count); // TODO: caller should set the position and the limit
+    // glUniform3iv(location, v);
+    // v.limit(v.capacity());
+
+    throw new NotImplementedException("uniform3iv() unimplemented for BGFX");
   }
 
   @Override
   public void uniform4iv(int location, int count, IntBuffer v) {
-    v.limit(4*count); // TODO: caller should set the position and the limit
-    glUniform4iv(location, v);
-    v.limit(v.capacity());
+    // v.limit(4*count); // TODO: caller should set the position and the limit
+    // glUniform4iv(location, v);
+    // v.limit(v.capacity());
+
+    throw new NotImplementedException("uniform4iv() unimplemented for BGFX");
   }
 
   @Override
   public void uniform1fv(int location, int count, FloatBuffer v) {
-    v.limit(count); // TODO: caller should set the position and the limit
-    glUniform1fv(location, v);
-    v.limit(v.capacity());
+    // v.limit(count); // TODO: caller should set the position and the limit
+    // glUniform1fv(location, v);
+    // v.limit(v.capacity());
+
+    throw new NotImplementedException("uniform1fv() unimplemented for BGFX");
   }
 
   @Override
   public void uniform2fv(int location, int count, FloatBuffer v) {
-    v.limit(2*count); // TODO: caller should set the position and the limit
-    glUniform2fv(location, v);
-    v.limit(v.capacity());
+    // v.limit(2*count); // TODO: caller should set the position and the limit
+    // glUniform2fv(location, v);
+    // v.limit(v.capacity());
+
+    throw new NotImplementedException("uniform2fv() unimplemented for BGFX");
   }
 
   @Override
   public void uniform3fv(int location, int count, FloatBuffer v) {
-    v.limit(3*count); // TODO: caller should set the position and the limit
-    glUniform3fv(location, v);
-    v.limit(v.capacity());
+    // v.limit(3*count); // TODO: caller should set the position and the limit
+    // glUniform3fv(location, v);
+    // v.limit(v.capacity());
+
+    throw new NotImplementedException("uniform3fv() unimplemented for BGFX");
   }
 
   @Override
   public void uniform4fv(int location, int count, FloatBuffer v) {
-    v.limit(4*count); // TODO: caller should set the position and the limit
-    glUniform4fv(location, v);
-    v.limit(v.capacity());
+    // v.limit(4*count); // TODO: caller should set the position and the limit
+    // glUniform4fv(location, v);
+    // v.limit(v.capacity());
+
+    throw new NotImplementedException("uniform4fv() unimplemented for BGFX");
   }
 
   @Override
   public void uniformMatrix2fv(int location, int count, boolean transpose, FloatBuffer mat) {
-    mat.limit(4*count); // TODO: caller should set the position and the limit
-    glUniformMatrix2fv(location, transpose, mat);
-    mat.limit(mat.capacity());
+    // mat.limit(4*count); // TODO: caller should set the position and the limit
+    // glUniformMatrix2fv(location, transpose, mat);
+    // mat.limit(mat.capacity());
+
+    throw new NotImplementedException("uniformMatrix2fv() unimplemented for BGFX");
   }
 
   @Override
   public void uniformMatrix3fv(int location, int count, boolean transpose, FloatBuffer mat) {
-    mat.limit(9*count); // TODO: caller should set the position and the limit
-    glUniformMatrix3fv(location, transpose, mat);
-    mat.limit(mat.capacity());
+    // mat.limit(9*count); // TODO: caller should set the position and the limit
+    // glUniformMatrix3fv(location, transpose, mat);
+    // mat.limit(mat.capacity());
+
+    throw new NotImplementedException("uniformMatrix3fv() unimplemented for BGFX");
   }
 
   @Override
   public void uniformMatrix4fv(int location, int count, boolean transpose, FloatBuffer mat) {
-    mat.limit(16*count); // TODO: caller should set the position and the limit
-    glUniformMatrix4fv(location, transpose, mat);
-    mat.limit(mat.capacity());
+    // mat.limit(16*count); // TODO: caller should set the position and the limit
+    // glUniformMatrix4fv(location, transpose, mat);
+    // mat.limit(mat.capacity());
+
+    throw new NotImplementedException("uniformMatrix4fv() unimplemented for BGFX");
   }
 
   @Override
   public void validateProgram(int program) {
-    glValidateProgram(program);
+    // glValidateProgram(program);
+    throw new NotImplementedException("validateProgram() unimplemented for BGFX");
   }
 
   @Override
   public boolean isShader(int shader) {
-    return glIsShader(shader);
+    // return glIsShader(shader);
+    throw new NotImplementedException("isShader() unimplemented for BGFX");
   }
 
   @Override
   public void getShaderiv(int shader, int pname, IntBuffer params) {
-    glGetShaderiv(shader, pname, params);
+    // glGetShaderiv(shader, pname, params);
+    throw new NotImplementedException("getShaderiv() unimplemented for BGFX");
   }
 
   @Override
   public void getAttachedShaders(int program, int maxCount, IntBuffer count, IntBuffer shaders) {
-    glGetAttachedShaders(program, count, shaders);
+    // glGetAttachedShaders(program, count, shaders);
+    throw new NotImplementedException("getAttachedShaders() unimplemented for BGFX");
   }
 
   @Override
