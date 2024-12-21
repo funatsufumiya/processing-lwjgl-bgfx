@@ -36,6 +36,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.BufferUtils;
@@ -275,6 +276,7 @@ import static codeanticode.lwjgl.internal.DummyGLConstants.GL_VERTEX_SHADER;
 import static codeanticode.lwjgl.internal.DummyGLConstants.GL_VIEWPORT;
 import static codeanticode.lwjgl.internal.DummyGLConstants.GL_WRITE_ONLY;
 import static codeanticode.lwjgl.internal.DummyGLConstants.GL_ZERO;
+import codeanticode.lwjgl.internal.DummyGLConstantsNames;
 import codeanticode.lwjgl.tess.PGLU;
 import codeanticode.lwjgl.tess.PGLUtessellator;
 import codeanticode.lwjgl.tess.PGLUtessellatorCallbackAdapter;
@@ -1084,9 +1086,25 @@ public class PLWJGL extends PGL {
   }
 
   @Override
-  public String getString(int name) {
+  public String getString(int __name) {
     // return glGetString(name);
+
+    int id = __name;
+    String name = DummyGLConstantsNames.getName(id);
+    String hex = Integer.toHexString(id).toUpperCase();
+
+    logWarning("getString(" + name + ") was called" +
+      " (" + name + " = " + id + " = " + "0x" + hex + ")");
+
     throw new NotImplementedException("getString() unimplemented for BGFX");
+  }
+
+  public static Logger getLogger() {
+    return Logger.getLogger("PLWJGL");
+  }
+
+  public static void logWarning(String message) {
+    getLogger().warning(message);
   }
 
   ///////////////////////////////////////////////////////////
@@ -1096,7 +1114,12 @@ public class PLWJGL extends PGL {
   @Override
   public int getError() {
     // return glGetError();
-    throw new NotImplementedException("getError() unimplemented for BGFX");
+
+    // throw new NotImplementedException("getError() unimplemented for BGFX");
+
+    logWarning("getError() currently does nothing in BGFX");
+
+    return 0;
   }
 
   @Override
