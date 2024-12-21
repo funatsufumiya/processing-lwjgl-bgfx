@@ -1,8 +1,8 @@
-## Processing LWJGL BGFX Fork
-
-***WORK IN PROGRESS***
+## Processing LWJGL Library fork
 
 This is based on [processing-lwjgl](https://github.com/codeanticode/processing-lwjgl)
+
+( This branch is still based on original code, just ported to Gradle, and confirmed working using Processing 4.3.1 libraries. )
 
 ### Run
 
