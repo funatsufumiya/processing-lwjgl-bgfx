@@ -7,6 +7,7 @@ This is based on [processing-lwjgl](https://github.com/codeanticode/processing-l
 ### Run
 
 ```
+./gradlew buildExample
 ./gradlew runExample
 ```
 
