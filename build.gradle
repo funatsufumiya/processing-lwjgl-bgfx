@@ -32,6 +32,10 @@ sourceSets {
             // srcDirs = ['example']
             srcDirs = ['examples/LWJGL-test/src']
         }
+        // compileClasspath += sourceSets.main.output + configurations.implementation
+        // runtimeClasspath += sourceSets.main.output + configurations.implementation
+        compileClasspath += sourceSets.main.output + configurations.compileClasspath
+        runtimeClasspath += sourceSets.main.output + configurations.runtimeClasspath
     }
 }
 
