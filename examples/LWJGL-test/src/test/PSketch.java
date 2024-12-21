@@ -10,18 +10,21 @@ import processing.opengl.PShader;
 public class PSketch extends PApplet {
   PShader blur;
   
+  @Override
   public void settings() {
 //    size(600, 400, PLWJGL.P2D);
     size(600, 400, PLWJGL.P3D);
 //    fullScreen(PLWJGL.P3D);
   }
   
+  @Override
   public void setup() {
 //    blur = loadShader("blur.glsl"); 
 //    stroke(255, 0, 0);
 //    rectMode(CENTER);
   }
  
+  @Override
   public void draw() {
     background(255);
     
