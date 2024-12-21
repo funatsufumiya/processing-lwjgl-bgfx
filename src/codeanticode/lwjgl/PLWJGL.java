@@ -29,6 +29,8 @@ import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.PathIterator;
+import java.io.IOException;
+import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -433,6 +435,7 @@ import codeanticode.lwjgl.tess.PGLU;
 import codeanticode.lwjgl.tess.PGLUtessellator;
 import codeanticode.lwjgl.tess.PGLUtessellatorCallbackAdapter;
 import processing.core.PApplet;
+import processing.core.PGraphics;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
@@ -654,16 +657,16 @@ public class PLWJGL extends PGL {
 
 
 
-  @Override
-  protected int getFontAscent(Object font) {
-    return getFontMetrics((Font) font).getAscent();
-  }
+  // @Override
+  // protected int getFontAscent(Object font) {
+  //   return getFontMetrics((Font) font).getAscent();
+  // }
 
 
-  @Override
-  protected int getFontDescent(Object font) {
-    return getFontMetrics((Font) font).getDescent();
-  }
+  // @Override
+  // protected int getFontDescent(Object font) {
+  //   return getFontMetrics((Font) font).getDescent();
+  // }
 
 
   @Override
@@ -2269,82 +2272,73 @@ public class PLWJGL extends PGL {
   }
 
 
-  // @Override
-  // protected String getGLSLVersionSuffix() {
-  //   String versionVendorInfoString = glGetString(SHADING_LANGUAGE_VERSION);
-  //   if (versionVendorInfoString == null) {
-  //     return null;
-  //   }
+  @Override
+  protected String getGLSLVersionSuffix() {
+    String versionVendorInfoString = glGetString(SHADING_LANGUAGE_VERSION);
+    if (versionVendorInfoString == null) {
+      return null;
+    }
 
-  //   String es2prefix = "OpenGL ES GLSL ES ";
-  //   if (versionVendorInfoString.startsWith(es2prefix)) {
-  //     return " es";
-  //   }
-  //   return "";
-  // }
+    String es2prefix = "OpenGL ES GLSL ES ";
+    if (versionVendorInfoString.startsWith(es2prefix)) {
+      return " es";
+    }
+    return "";
+  }
 
-  // @Override
-  // protected String[] loadVertexShader(String filename) {
-  //   return loadVertexShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
-  // }
+  @Override
+  protected String[] loadVertexShader(String filename) {
+    return loadVertexShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
+  }
 
+  @Override
+  protected String[] loadFragmentShader(String filename) {
+    return loadFragmentShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
+  }
 
-  // @Override
-  // protected String[] loadFragmentShader(String filename) {
-  //   return loadFragmentShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
-  // }
+  @Override
+  protected String[] loadVertexShader(URL url) {
+    return loadVertexShader(url, getGLSLVersion(), getGLSLVersionSuffix());
+  }
 
+  @Override
+  protected String[] loadFragmentShader(URL url) {
+    return loadFragmentShader(url, getGLSLVersion(), getGLSLVersionSuffix());
+  }
 
-  // @Override
-  // protected String[] loadVertexShader(URL url) {
-  //   return loadVertexShader(url, getGLSLVersion(), getGLSLVersionSuffix());
-  // }
+  @Override
+  protected String[] loadFragmentShader(String filename, int version, String versionSuffix) {
+    String[] fragSrc0 = sketch.loadStrings(filename);
+    return preprocessFragmentSource(fragSrc0, version, versionSuffix);
+  }
 
+  @Override
+  protected String[] loadVertexShader(String filename, int version, String versionSuffix) {
+    String[] vertSrc0 = sketch.loadStrings(filename);
+    return preprocessVertexSource(vertSrc0, version, versionSuffix);
+  }
 
-  // @Override
-  // protected String[] loadFragmentShader(URL url) {
-  //   return loadFragmentShader(url, getGLSLVersion(), getGLSLVersionSuffix());
-  // }
+  @Override
+  protected String[] loadFragmentShader(URL url, int version, String versionSuffix) {
+    try {
+      String[] fragSrc0 = PApplet.loadStrings(url.openStream());
+      return preprocessFragmentSource(fragSrc0, version, versionSuffix);
+    } catch (IOException e) {
+      PGraphics.showException("Cannot load fragment shader " + url.getFile());
+    }
+    return null;
+  }
 
-
-  // @Override
-  // protected String[] loadFragmentShader(String filename, int version, String versionSuffix) {
-  //   String[] fragSrc0 = sketch.loadStrings(filename);
-  //   return preprocessFragmentSource(fragSrc0, version, versionSuffix);
-  // }
-
-
-  // @Override
-  // protected String[] loadVertexShader(String filename, int version, String versionSuffix) {
-  //   String[] vertSrc0 = sketch.loadStrings(filename);
-  //   return preprocessVertexSource(vertSrc0, version, versionSuffix);
-  // }
-
-
-  // @Override
-  // protected String[] loadFragmentShader(URL url, int version, String versionSuffix) {
-  //   try {
-  //     String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-  //     return preprocessFragmentSource(fragSrc0, version, versionSuffix);
-  //   } catch (IOException e) {
-  //     PGraphics.showException("Cannot load fragment shader " + url.getFile());
-  //   }
-  //   return null;
-  // }
-
-
-  // @Override
-  // protected String[] loadVertexShader(URL url, int version, String versionSuffix) {
-  //   try {
-  //     String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-  //     return preprocessVertexSource(vertSrc0, version, versionSuffix);
-  //   } catch (IOException e) {
-  //     PGraphics.showException("Cannot load vertex shader " + url.getFile());
-  //   }
-  //   return null;
-  // }
-
-
+  @Override
+  protected String[] loadVertexShader(URL url, int version, String versionSuffix) {
+    try {
+      String[] vertSrc0 = PApplet.loadStrings(url.openStream());
+      return preprocessVertexSource(vertSrc0, version, versionSuffix);
+    } catch (IOException e) {
+      PGraphics.showException("Cannot load vertex shader " + url.getFile());
+    }
+    return null;
+  }
 
   private void initFBOLayerES() {
     IntBuffer buf = allocateDirectIntBuffer(fboWidth * fboHeight);

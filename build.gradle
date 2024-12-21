@@ -1,5 +1,6 @@
 plugins {
     id 'java-library'
+    id 'application'
 }
 
 group 'com.example'
@@ -14,7 +15,15 @@ dependencies {
     implementation group: 'org.lwjgl', name: 'lwjgl', version: '3.3.5'
     implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.3.5'
     implementation group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.3.5'
-    implementation group: 'org.processing', name: 'core', version: '3.3.7'
+    // implementation group: 'org.processing', name: 'core', version: '3.3.7'
+    // implementation(group: 'org.processing', name: 'core', version: '3.3.7') {
+    //     exclude group: 'org.jogamp.jogl'
+    //     exclude group: 'org.jogamp.gluegen'
+    // }
+    implementation(group: 'org.processing', name: 'core', version: '4.3.1') {
+        exclude group: 'org.jogamp.jogl'
+        exclude group: 'org.jogamp.gluegen'
+    }
     testImplementation 'junit:junit:4.12'
 }
 
@@ -29,11 +38,8 @@ sourceSets {
     }
     example {
         java {
-            // srcDirs = ['example']
             srcDirs = ['examples/LWJGL-test/src']
         }
-        // compileClasspath += sourceSets.main.output + configurations.implementation
-        // runtimeClasspath += sourceSets.main.output + configurations.implementation
         compileClasspath += sourceSets.main.output + configurations.compileClasspath
         runtimeClasspath += sourceSets.main.output + configurations.runtimeClasspath
     }
@@ -45,7 +51,7 @@ tasks.withType(JavaCompile) {
 
 tasks.register('buildExample', JavaCompile) {
     source = sourceSets.example.java
-    classpath = sourceSets.main.runtimeClasspath
+    classpath = sourceSets.example.compileClasspath + configurations.compileClasspath
     destinationDir = file("${buildDir}/classes/example")
     options.encoding = 'UTF-8'
 }
