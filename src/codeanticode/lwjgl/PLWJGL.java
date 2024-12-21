@@ -22,40 +22,419 @@
 
 package codeanticode.lwjgl;
 
-import codeanticode.lwjgl.tess.PGLU;
-import codeanticode.lwjgl.tess.PGLUtessellator;
-import codeanticode.lwjgl.tess.PGLUtessellatorCallbackAdapter;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.PointerBuffer;
-import org.lwjgl.opengl.ARBMapBufferRange;
-import org.lwjgl.opengl.EXTFramebufferObject;
-import org.lwjgl.opengl.GL;
-import org.lwjgl.opengl.GL21;
-import org.lwjgl.opengl.GL32C;
-import org.lwjgl.system.MemoryStack;
-import processing.core.PApplet;
-import processing.core.PGraphics;
-import processing.opengl.PGL;
-import processing.opengl.PGraphicsOpenGL;
-
-import java.awt.*;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Shape;
+import java.awt.Toolkit;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.PathIterator;
-import java.io.IOException;
-import java.net.URL;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 
-import static org.lwjgl.opengl.ARBES2Compatibility.*;
-import static org.lwjgl.opengl.ARBFramebufferObject.*;
-import static org.lwjgl.opengl.ARBSync.*;
-import static org.lwjgl.opengl.ARBTextureFilterAnisotropic.*;
-import static org.lwjgl.opengl.GL21C.*;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.PointerBuffer;
+import static org.lwjgl.opengl.ARBES2Compatibility.GL_HIGH_FLOAT;
+import static org.lwjgl.opengl.ARBES2Compatibility.GL_HIGH_INT;
+import static org.lwjgl.opengl.ARBES2Compatibility.GL_LOW_FLOAT;
+import static org.lwjgl.opengl.ARBES2Compatibility.GL_LOW_INT;
+import static org.lwjgl.opengl.ARBES2Compatibility.GL_MEDIUM_FLOAT;
+import static org.lwjgl.opengl.ARBES2Compatibility.GL_MEDIUM_INT;
+import static org.lwjgl.opengl.ARBES2Compatibility.GL_RGB565;
+import static org.lwjgl.opengl.ARBES2Compatibility.glGetShaderPrecisionFormat;
+import static org.lwjgl.opengl.ARBES2Compatibility.glReleaseShaderCompiler;
+import static org.lwjgl.opengl.ARBES2Compatibility.glShaderBinary;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_COLOR_ATTACHMENT0;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_COLOR_ATTACHMENT1;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_COLOR_ATTACHMENT2;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_COLOR_ATTACHMENT3;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_DEPTH24_STENCIL8;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_DEPTH_ATTACHMENT;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_DEPTH_STENCIL;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_DRAW_FRAMEBUFFER;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_ATTACHMENT_DEPTH_SIZE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_ATTACHMENT_STENCIL_SIZE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_BINDING;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_COMPLETE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_UNDEFINED;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_FRAMEBUFFER_UNSUPPORTED;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_MAX_SAMPLES;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_READ_FRAMEBUFFER;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_ALPHA_SIZE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_BLUE_SIZE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_DEPTH_SIZE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_GREEN_SIZE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_HEIGHT;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_INTERNAL_FORMAT;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_RED_SIZE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_STENCIL_SIZE;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_RENDERBUFFER_WIDTH;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_STENCIL_ATTACHMENT;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_STENCIL_INDEX1;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_STENCIL_INDEX4;
+import static org.lwjgl.opengl.ARBFramebufferObject.GL_STENCIL_INDEX8;
+import static org.lwjgl.opengl.ARBFramebufferObject.glBindFramebuffer;
+import static org.lwjgl.opengl.ARBFramebufferObject.glBindRenderbuffer;
+import static org.lwjgl.opengl.ARBFramebufferObject.glBlitFramebuffer;
+import static org.lwjgl.opengl.ARBFramebufferObject.glCheckFramebufferStatus;
+import static org.lwjgl.opengl.ARBFramebufferObject.glDeleteFramebuffers;
+import static org.lwjgl.opengl.ARBFramebufferObject.glDeleteRenderbuffers;
+import static org.lwjgl.opengl.ARBFramebufferObject.glFramebufferRenderbuffer;
+import static org.lwjgl.opengl.ARBFramebufferObject.glFramebufferTexture2D;
+import static org.lwjgl.opengl.ARBFramebufferObject.glGenFramebuffers;
+import static org.lwjgl.opengl.ARBFramebufferObject.glGenRenderbuffers;
+import static org.lwjgl.opengl.ARBFramebufferObject.glGenerateMipmap;
+import static org.lwjgl.opengl.ARBFramebufferObject.glGetFramebufferAttachmentParameteri;
+import static org.lwjgl.opengl.ARBFramebufferObject.glGetFramebufferAttachmentParameteriv;
+import static org.lwjgl.opengl.ARBFramebufferObject.glGetRenderbufferParameteriv;
+import static org.lwjgl.opengl.ARBFramebufferObject.glIsFramebuffer;
+import static org.lwjgl.opengl.ARBFramebufferObject.glIsRenderbuffer;
+import static org.lwjgl.opengl.ARBFramebufferObject.glRenderbufferStorage;
+import static org.lwjgl.opengl.ARBFramebufferObject.glRenderbufferStorageMultisample;
+import org.lwjgl.opengl.ARBMapBufferRange;
+import static org.lwjgl.opengl.ARBSync.GL_ALREADY_SIGNALED;
+import static org.lwjgl.opengl.ARBSync.GL_CONDITION_SATISFIED;
+import static org.lwjgl.opengl.ARBSync.GL_SYNC_GPU_COMMANDS_COMPLETE;
+import static org.lwjgl.opengl.ARBSync.glClientWaitSync;
+import static org.lwjgl.opengl.ARBSync.glDeleteSync;
+import static org.lwjgl.opengl.ARBSync.glFenceSync;
+import static org.lwjgl.opengl.ARBTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY;
+import static org.lwjgl.opengl.ARBTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY;
+import org.lwjgl.opengl.EXTFramebufferObject;
+import org.lwjgl.opengl.GL;
+import static org.lwjgl.opengl.GL11C.GL_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_ALWAYS;
+import static org.lwjgl.opengl.GL11C.GL_BACK;
+import static org.lwjgl.opengl.GL11C.GL_BLEND;
+import static org.lwjgl.opengl.GL11C.GL_BYTE;
+import static org.lwjgl.opengl.GL11C.GL_CCW;
+import static org.lwjgl.opengl.GL11C.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_CULL_FACE;
+import static org.lwjgl.opengl.GL11C.GL_CW;
+import static org.lwjgl.opengl.GL11C.GL_DECR;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_COMPONENT;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_TEST;
+import static org.lwjgl.opengl.GL11C.GL_DEPTH_WRITEMASK;
+import static org.lwjgl.opengl.GL11C.GL_DITHER;
+import static org.lwjgl.opengl.GL11C.GL_DONT_CARE;
+import static org.lwjgl.opengl.GL11C.GL_DST_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_DST_COLOR;
+import static org.lwjgl.opengl.GL11C.GL_EQUAL;
+import static org.lwjgl.opengl.GL11C.GL_EXTENSIONS;
+import static org.lwjgl.opengl.GL11C.GL_FALSE;
+import static org.lwjgl.opengl.GL11C.GL_FASTEST;
+import static org.lwjgl.opengl.GL11C.GL_FLOAT;
+import static org.lwjgl.opengl.GL11C.GL_FRONT;
+import static org.lwjgl.opengl.GL11C.GL_FRONT_AND_BACK;
+import static org.lwjgl.opengl.GL11C.GL_GEQUAL;
+import static org.lwjgl.opengl.GL11C.GL_GREATER;
+import static org.lwjgl.opengl.GL11C.GL_INCR;
+import static org.lwjgl.opengl.GL11C.GL_INT;
+import static org.lwjgl.opengl.GL11C.GL_INVERT;
+import static org.lwjgl.opengl.GL11C.GL_KEEP;
+import static org.lwjgl.opengl.GL11C.GL_LEQUAL;
+import static org.lwjgl.opengl.GL11C.GL_LESS;
+import static org.lwjgl.opengl.GL11C.GL_LINEAR;
+import static org.lwjgl.opengl.GL11C.GL_LINEAR_MIPMAP_LINEAR;
+import static org.lwjgl.opengl.GL11C.GL_LINEAR_MIPMAP_NEAREST;
+import static org.lwjgl.opengl.GL11C.GL_LINES;
+import static org.lwjgl.opengl.GL11C.GL_LINE_LOOP;
+import static org.lwjgl.opengl.GL11C.GL_LINE_SMOOTH;
+import static org.lwjgl.opengl.GL11C.GL_LINE_STRIP;
+import static org.lwjgl.opengl.GL11C.GL_MAX_TEXTURE_SIZE;
+import static org.lwjgl.opengl.GL11C.GL_NEAREST;
+import static org.lwjgl.opengl.GL11C.GL_NEVER;
+import static org.lwjgl.opengl.GL11C.GL_NICEST;
+import static org.lwjgl.opengl.GL11C.GL_NOTEQUAL;
+import static org.lwjgl.opengl.GL11C.GL_ONE;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_DST_COLOR;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_ONE_MINUS_SRC_COLOR;
+import static org.lwjgl.opengl.GL11C.GL_PACK_ALIGNMENT;
+import static org.lwjgl.opengl.GL11C.GL_POINTS;
+import static org.lwjgl.opengl.GL11C.GL_POLYGON_OFFSET_FILL;
+import static org.lwjgl.opengl.GL11C.GL_POLYGON_SMOOTH;
+import static org.lwjgl.opengl.GL11C.GL_RENDERER;
+import static org.lwjgl.opengl.GL11C.GL_REPEAT;
+import static org.lwjgl.opengl.GL11C.GL_REPLACE;
+import static org.lwjgl.opengl.GL11C.GL_RGB;
+import static org.lwjgl.opengl.GL11C.GL_RGB5_A1;
+import static org.lwjgl.opengl.GL11C.GL_RGB8;
+import static org.lwjgl.opengl.GL11C.GL_RGBA;
+import static org.lwjgl.opengl.GL11C.GL_RGBA4;
+import static org.lwjgl.opengl.GL11C.GL_RGBA8;
+import static org.lwjgl.opengl.GL11C.GL_SCISSOR_TEST;
+import static org.lwjgl.opengl.GL11C.GL_SHORT;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11C.GL_SRC_ALPHA_SATURATE;
+import static org.lwjgl.opengl.GL11C.GL_SRC_COLOR;
+import static org.lwjgl.opengl.GL11C.GL_STENCIL;
+import static org.lwjgl.opengl.GL11C.GL_STENCIL_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11C.GL_STENCIL_INDEX;
+import static org.lwjgl.opengl.GL11C.GL_STENCIL_TEST;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_BINDING_2D;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL11C.GL_TEXTURE_WRAP_T;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_FAN;
+import static org.lwjgl.opengl.GL11C.GL_TRIANGLE_STRIP;
+import static org.lwjgl.opengl.GL11C.GL_TRUE;
+import static org.lwjgl.opengl.GL11C.GL_UNPACK_ALIGNMENT;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_BYTE;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL11C.GL_UNSIGNED_SHORT;
+import static org.lwjgl.opengl.GL11C.GL_VENDOR;
+import static org.lwjgl.opengl.GL11C.GL_VERSION;
+import static org.lwjgl.opengl.GL11C.GL_VIEWPORT;
+import static org.lwjgl.opengl.GL11C.GL_ZERO;
+import static org.lwjgl.opengl.GL11C.glBindTexture;
+import static org.lwjgl.opengl.GL11C.glBlendFunc;
+import static org.lwjgl.opengl.GL11C.glClear;
+import static org.lwjgl.opengl.GL11C.glClearColor;
+import static org.lwjgl.opengl.GL11C.glClearDepth;
+import static org.lwjgl.opengl.GL11C.glClearStencil;
+import static org.lwjgl.opengl.GL11C.glColorMask;
+import static org.lwjgl.opengl.GL11C.glCopyTexImage2D;
+import static org.lwjgl.opengl.GL11C.glCopyTexSubImage2D;
+import static org.lwjgl.opengl.GL11C.glCullFace;
+import static org.lwjgl.opengl.GL11C.glDeleteTextures;
+import static org.lwjgl.opengl.GL11C.glDepthFunc;
+import static org.lwjgl.opengl.GL11C.glDepthMask;
+import static org.lwjgl.opengl.GL11C.glDepthRange;
+import static org.lwjgl.opengl.GL11C.glDisable;
+import static org.lwjgl.opengl.GL11C.glDrawArrays;
+import static org.lwjgl.opengl.GL11C.glDrawBuffer;
+import static org.lwjgl.opengl.GL11C.glDrawElements;
+import static org.lwjgl.opengl.GL11C.glEnable;
+import static org.lwjgl.opengl.GL11C.glFinish;
+import static org.lwjgl.opengl.GL11C.glFlush;
+import static org.lwjgl.opengl.GL11C.glFrontFace;
+import static org.lwjgl.opengl.GL11C.glGenTextures;
+import static org.lwjgl.opengl.GL11C.glGetBooleanv;
+import static org.lwjgl.opengl.GL11C.glGetError;
+import static org.lwjgl.opengl.GL11C.glGetFloatv;
+import static org.lwjgl.opengl.GL11C.glGetInteger;
+import static org.lwjgl.opengl.GL11C.glGetIntegerv;
+import static org.lwjgl.opengl.GL11C.glGetString;
+import static org.lwjgl.opengl.GL11C.glGetTexParameterfv;
+import static org.lwjgl.opengl.GL11C.glGetTexParameteriv;
+import static org.lwjgl.opengl.GL11C.glHint;
+import static org.lwjgl.opengl.GL11C.glIsEnabled;
+import static org.lwjgl.opengl.GL11C.glIsTexture;
+import static org.lwjgl.opengl.GL11C.glLineWidth;
+import static org.lwjgl.opengl.GL11C.glPixelStorei;
+import static org.lwjgl.opengl.GL11C.glPolygonOffset;
+import static org.lwjgl.opengl.GL11C.glReadBuffer;
+import static org.lwjgl.opengl.GL11C.glReadPixels;
+import static org.lwjgl.opengl.GL11C.glScissor;
+import static org.lwjgl.opengl.GL11C.glStencilFunc;
+import static org.lwjgl.opengl.GL11C.glStencilMask;
+import static org.lwjgl.opengl.GL11C.glStencilOp;
+import static org.lwjgl.opengl.GL11C.glTexImage2D;
+import static org.lwjgl.opengl.GL11C.glTexParameterf;
+import static org.lwjgl.opengl.GL11C.glTexParameterfv;
+import static org.lwjgl.opengl.GL11C.glTexParameteri;
+import static org.lwjgl.opengl.GL11C.glTexParameteriv;
+import static org.lwjgl.opengl.GL11C.glTexSubImage2D;
+import static org.lwjgl.opengl.GL11C.glViewport;
+import static org.lwjgl.opengl.GL12C.GL_ALIASED_LINE_WIDTH_RANGE;
+import static org.lwjgl.opengl.GL12C.GL_CLAMP_TO_EDGE;
+import static org.lwjgl.opengl.GL12C.GL_TEXTURE_WRAP_R;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_SHORT_4_4_4_4;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_SHORT_5_5_5_1;
+import static org.lwjgl.opengl.GL12C.GL_UNSIGNED_SHORT_5_6_5;
+import static org.lwjgl.opengl.GL13C.GL_COMPRESSED_TEXTURE_FORMATS;
+import static org.lwjgl.opengl.GL13C.GL_MULTISAMPLE;
+import static org.lwjgl.opengl.GL13C.GL_NUM_COMPRESSED_TEXTURE_FORMATS;
+import static org.lwjgl.opengl.GL13C.GL_SAMPLES;
+import static org.lwjgl.opengl.GL13C.GL_SAMPLE_ALPHA_TO_COVERAGE;
+import static org.lwjgl.opengl.GL13C.GL_SAMPLE_COVERAGE;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE0;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE1;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE2;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE3;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
+import static org.lwjgl.opengl.GL13C.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
+import static org.lwjgl.opengl.GL13C.glActiveTexture;
+import static org.lwjgl.opengl.GL13C.glCompressedTexImage2D;
+import static org.lwjgl.opengl.GL13C.glCompressedTexSubImage2D;
+import static org.lwjgl.opengl.GL13C.glSampleCoverage;
+import static org.lwjgl.opengl.GL14C.GL_CONSTANT_ALPHA;
+import static org.lwjgl.opengl.GL14C.GL_CONSTANT_COLOR;
+import static org.lwjgl.opengl.GL14C.GL_DECR_WRAP;
+import static org.lwjgl.opengl.GL14C.GL_DEPTH_COMPONENT16;
+import static org.lwjgl.opengl.GL14C.GL_DEPTH_COMPONENT24;
+import static org.lwjgl.opengl.GL14C.GL_DEPTH_COMPONENT32;
+import static org.lwjgl.opengl.GL14C.GL_FUNC_ADD;
+import static org.lwjgl.opengl.GL14C.GL_FUNC_REVERSE_SUBTRACT;
+import static org.lwjgl.opengl.GL14C.GL_FUNC_SUBTRACT;
+import static org.lwjgl.opengl.GL14C.GL_INCR_WRAP;
+import static org.lwjgl.opengl.GL14C.GL_MAX;
+import static org.lwjgl.opengl.GL14C.GL_MIN;
+import static org.lwjgl.opengl.GL14C.GL_ONE_MINUS_CONSTANT_ALPHA;
+import static org.lwjgl.opengl.GL14C.GL_ONE_MINUS_CONSTANT_COLOR;
+import static org.lwjgl.opengl.GL14C.glBlendColor;
+import static org.lwjgl.opengl.GL14C.glBlendEquation;
+import static org.lwjgl.opengl.GL14C.glBlendFuncSeparate;
+import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15C.GL_ARRAY_BUFFER_BINDING;
+import static org.lwjgl.opengl.GL15C.GL_BUFFER_SIZE;
+import static org.lwjgl.opengl.GL15C.GL_BUFFER_USAGE;
+import static org.lwjgl.opengl.GL15C.GL_DYNAMIC_DRAW;
+import static org.lwjgl.opengl.GL15C.GL_ELEMENT_ARRAY_BUFFER;
+import static org.lwjgl.opengl.GL15C.GL_READ_ONLY;
+import static org.lwjgl.opengl.GL15C.GL_READ_WRITE;
+import static org.lwjgl.opengl.GL15C.GL_STATIC_DRAW;
+import static org.lwjgl.opengl.GL15C.GL_STREAM_DRAW;
+import static org.lwjgl.opengl.GL15C.GL_STREAM_READ;
+import static org.lwjgl.opengl.GL15C.GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING;
+import static org.lwjgl.opengl.GL15C.GL_WRITE_ONLY;
+import static org.lwjgl.opengl.GL15C.glBindBuffer;
+import static org.lwjgl.opengl.GL15C.glBufferData;
+import static org.lwjgl.opengl.GL15C.glBufferSubData;
+import static org.lwjgl.opengl.GL15C.glDeleteBuffers;
+import static org.lwjgl.opengl.GL15C.glGenBuffers;
+import static org.lwjgl.opengl.GL15C.glGetBufferParameteriv;
+import static org.lwjgl.opengl.GL15C.glIsBuffer;
+import static org.lwjgl.opengl.GL15C.glMapBuffer;
+import static org.lwjgl.opengl.GL15C.glUnmapBuffer;
+import static org.lwjgl.opengl.GL20C.GL_BOOL;
+import static org.lwjgl.opengl.GL20C.GL_BOOL_VEC2;
+import static org.lwjgl.opengl.GL20C.GL_BOOL_VEC3;
+import static org.lwjgl.opengl.GL20C.GL_BOOL_VEC4;
+import static org.lwjgl.opengl.GL20C.GL_COMPILE_STATUS;
+import static org.lwjgl.opengl.GL20C.GL_CURRENT_VERTEX_ATTRIB;
+import static org.lwjgl.opengl.GL20C.GL_DELETE_STATUS;
+import static org.lwjgl.opengl.GL20C.GL_FLOAT_MAT2;
+import static org.lwjgl.opengl.GL20C.GL_FLOAT_MAT3;
+import static org.lwjgl.opengl.GL20C.GL_FLOAT_MAT4;
+import static org.lwjgl.opengl.GL20C.GL_FLOAT_VEC2;
+import static org.lwjgl.opengl.GL20C.GL_FLOAT_VEC3;
+import static org.lwjgl.opengl.GL20C.GL_FLOAT_VEC4;
+import static org.lwjgl.opengl.GL20C.GL_FRAGMENT_SHADER;
+import static org.lwjgl.opengl.GL20C.GL_INFO_LOG_LENGTH;
+import static org.lwjgl.opengl.GL20C.GL_INT_VEC2;
+import static org.lwjgl.opengl.GL20C.GL_INT_VEC3;
+import static org.lwjgl.opengl.GL20C.GL_INT_VEC4;
+import static org.lwjgl.opengl.GL20C.GL_LINK_STATUS;
+import static org.lwjgl.opengl.GL20C.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS;
+import static org.lwjgl.opengl.GL20C.GL_MAX_TEXTURE_IMAGE_UNITS;
+import static org.lwjgl.opengl.GL20C.GL_MAX_VERTEX_ATTRIBS;
+import static org.lwjgl.opengl.GL20C.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
+import static org.lwjgl.opengl.GL20C.GL_SAMPLER_2D;
+import static org.lwjgl.opengl.GL20C.GL_SAMPLER_CUBE;
+import static org.lwjgl.opengl.GL20C.GL_SHADER_SOURCE_LENGTH;
+import static org.lwjgl.opengl.GL20C.GL_SHADER_TYPE;
+import static org.lwjgl.opengl.GL20C.GL_SHADING_LANGUAGE_VERSION;
+import static org.lwjgl.opengl.GL20C.GL_VALIDATE_STATUS;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_ATTRIB_ARRAY_ENABLED;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_ATTRIB_ARRAY_NORMALIZED;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_ATTRIB_ARRAY_POINTER;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_ATTRIB_ARRAY_SIZE;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_ATTRIB_ARRAY_STRIDE;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_ATTRIB_ARRAY_TYPE;
+import static org.lwjgl.opengl.GL20C.GL_VERTEX_SHADER;
+import static org.lwjgl.opengl.GL20C.glAttachShader;
+import static org.lwjgl.opengl.GL20C.glBindAttribLocation;
+import static org.lwjgl.opengl.GL20C.glBlendEquationSeparate;
+import static org.lwjgl.opengl.GL20C.glCompileShader;
+import static org.lwjgl.opengl.GL20C.glCreateProgram;
+import static org.lwjgl.opengl.GL20C.glCreateShader;
+import static org.lwjgl.opengl.GL20C.glDeleteProgram;
+import static org.lwjgl.opengl.GL20C.glDeleteShader;
+import static org.lwjgl.opengl.GL20C.glDetachShader;
+import static org.lwjgl.opengl.GL20C.glDisableVertexAttribArray;
+import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20C.glGetActiveAttrib;
+import static org.lwjgl.opengl.GL20C.glGetActiveUniform;
+import static org.lwjgl.opengl.GL20C.glGetAttachedShaders;
+import static org.lwjgl.opengl.GL20C.glGetAttribLocation;
+import static org.lwjgl.opengl.GL20C.glGetProgramInfoLog;
+import static org.lwjgl.opengl.GL20C.glGetProgrami;
+import static org.lwjgl.opengl.GL20C.glGetProgramiv;
+import static org.lwjgl.opengl.GL20C.glGetShaderInfoLog;
+import static org.lwjgl.opengl.GL20C.glGetShaderSource;
+import static org.lwjgl.opengl.GL20C.glGetShaderi;
+import static org.lwjgl.opengl.GL20C.glGetShaderiv;
+import static org.lwjgl.opengl.GL20C.glGetUniformLocation;
+import static org.lwjgl.opengl.GL20C.glGetUniformfv;
+import static org.lwjgl.opengl.GL20C.glGetUniformiv;
+import static org.lwjgl.opengl.GL20C.glGetVertexAttribPointerv;
+import static org.lwjgl.opengl.GL20C.glGetVertexAttribfv;
+import static org.lwjgl.opengl.GL20C.glGetVertexAttribiv;
+import static org.lwjgl.opengl.GL20C.glIsProgram;
+import static org.lwjgl.opengl.GL20C.glIsShader;
+import static org.lwjgl.opengl.GL20C.glLinkProgram;
+import static org.lwjgl.opengl.GL20C.glShaderSource;
+import static org.lwjgl.opengl.GL20C.glStencilFuncSeparate;
+import static org.lwjgl.opengl.GL20C.glStencilMaskSeparate;
+import static org.lwjgl.opengl.GL20C.glStencilOpSeparate;
+import static org.lwjgl.opengl.GL20C.glUniform1f;
+import static org.lwjgl.opengl.GL20C.glUniform1fv;
+import static org.lwjgl.opengl.GL20C.glUniform1i;
+import static org.lwjgl.opengl.GL20C.glUniform1iv;
+import static org.lwjgl.opengl.GL20C.glUniform2f;
+import static org.lwjgl.opengl.GL20C.glUniform2fv;
+import static org.lwjgl.opengl.GL20C.glUniform2i;
+import static org.lwjgl.opengl.GL20C.glUniform2iv;
+import static org.lwjgl.opengl.GL20C.glUniform3f;
+import static org.lwjgl.opengl.GL20C.glUniform3fv;
+import static org.lwjgl.opengl.GL20C.glUniform3i;
+import static org.lwjgl.opengl.GL20C.glUniform3iv;
+import static org.lwjgl.opengl.GL20C.glUniform4f;
+import static org.lwjgl.opengl.GL20C.glUniform4fv;
+import static org.lwjgl.opengl.GL20C.glUniform4i;
+import static org.lwjgl.opengl.GL20C.glUniform4iv;
+import static org.lwjgl.opengl.GL20C.glUniformMatrix2fv;
+import static org.lwjgl.opengl.GL20C.glUniformMatrix3fv;
+import static org.lwjgl.opengl.GL20C.glUniformMatrix4fv;
+import static org.lwjgl.opengl.GL20C.glUseProgram;
+import static org.lwjgl.opengl.GL20C.glValidateProgram;
+import static org.lwjgl.opengl.GL20C.glVertexAttrib1f;
+import static org.lwjgl.opengl.GL20C.glVertexAttrib1fv;
+import static org.lwjgl.opengl.GL20C.glVertexAttrib2f;
+import static org.lwjgl.opengl.GL20C.glVertexAttrib2fv;
+import static org.lwjgl.opengl.GL20C.glVertexAttrib3f;
+import static org.lwjgl.opengl.GL20C.glVertexAttrib3fv;
+import static org.lwjgl.opengl.GL20C.glVertexAttrib4f;
+import static org.lwjgl.opengl.GL20C.glVertexAttrib4fv;
+import static org.lwjgl.opengl.GL20C.glVertexAttribPointer;
+import org.lwjgl.opengl.GL21;
+import static org.lwjgl.opengl.GL21C.GL_PIXEL_PACK_BUFFER;
+import org.lwjgl.opengl.GL32C;
+import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
+
+import codeanticode.lwjgl.tess.PGLU;
+import codeanticode.lwjgl.tess.PGLUtessellator;
+import codeanticode.lwjgl.tess.PGLUtessellatorCallbackAdapter;
+import processing.core.PApplet;
+import processing.opengl.PGL;
+import processing.opengl.PGraphicsOpenGL;
 
 /**
  * Processing-OpenGL abstraction layer. LWJGL implementation.
@@ -1890,80 +2269,80 @@ public class PLWJGL extends PGL {
   }
 
 
-  @Override
-  protected String getGLSLVersionSuffix() {
-    String versionVendorInfoString = glGetString(SHADING_LANGUAGE_VERSION);
-    if (versionVendorInfoString == null) {
-      return null;
-    }
+  // @Override
+  // protected String getGLSLVersionSuffix() {
+  //   String versionVendorInfoString = glGetString(SHADING_LANGUAGE_VERSION);
+  //   if (versionVendorInfoString == null) {
+  //     return null;
+  //   }
 
-    String es2prefix = "OpenGL ES GLSL ES ";
-    if (versionVendorInfoString.startsWith(es2prefix)) {
-      return " es";
-    }
-    return "";
-  }
+  //   String es2prefix = "OpenGL ES GLSL ES ";
+  //   if (versionVendorInfoString.startsWith(es2prefix)) {
+  //     return " es";
+  //   }
+  //   return "";
+  // }
 
-  @Override
-  protected String[] loadVertexShader(String filename) {
-    return loadVertexShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
-  }
-
-
-  @Override
-  protected String[] loadFragmentShader(String filename) {
-    return loadFragmentShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
-  }
+  // @Override
+  // protected String[] loadVertexShader(String filename) {
+  //   return loadVertexShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
+  // }
 
 
-  @Override
-  protected String[] loadVertexShader(URL url) {
-    return loadVertexShader(url, getGLSLVersion(), getGLSLVersionSuffix());
-  }
+  // @Override
+  // protected String[] loadFragmentShader(String filename) {
+  //   return loadFragmentShader(filename, getGLSLVersion(), getGLSLVersionSuffix());
+  // }
 
 
-  @Override
-  protected String[] loadFragmentShader(URL url) {
-    return loadFragmentShader(url, getGLSLVersion(), getGLSLVersionSuffix());
-  }
+  // @Override
+  // protected String[] loadVertexShader(URL url) {
+  //   return loadVertexShader(url, getGLSLVersion(), getGLSLVersionSuffix());
+  // }
 
 
-  @Override
-  protected String[] loadFragmentShader(String filename, int version, String versionSuffix) {
-    String[] fragSrc0 = sketch.loadStrings(filename);
-    return preprocessFragmentSource(fragSrc0, version, versionSuffix);
-  }
+  // @Override
+  // protected String[] loadFragmentShader(URL url) {
+  //   return loadFragmentShader(url, getGLSLVersion(), getGLSLVersionSuffix());
+  // }
 
 
-  @Override
-  protected String[] loadVertexShader(String filename, int version, String versionSuffix) {
-    String[] vertSrc0 = sketch.loadStrings(filename);
-    return preprocessVertexSource(vertSrc0, version, versionSuffix);
-  }
+  // @Override
+  // protected String[] loadFragmentShader(String filename, int version, String versionSuffix) {
+  //   String[] fragSrc0 = sketch.loadStrings(filename);
+  //   return preprocessFragmentSource(fragSrc0, version, versionSuffix);
+  // }
 
 
-  @Override
-  protected String[] loadFragmentShader(URL url, int version, String versionSuffix) {
-    try {
-      String[] fragSrc0 = PApplet.loadStrings(url.openStream());
-      return preprocessFragmentSource(fragSrc0, version, versionSuffix);
-    } catch (IOException e) {
-      PGraphics.showException("Cannot load fragment shader " + url.getFile());
-    }
-    return null;
-  }
+  // @Override
+  // protected String[] loadVertexShader(String filename, int version, String versionSuffix) {
+  //   String[] vertSrc0 = sketch.loadStrings(filename);
+  //   return preprocessVertexSource(vertSrc0, version, versionSuffix);
+  // }
 
 
-  @Override
-  protected String[] loadVertexShader(URL url, int version, String versionSuffix) {
-    try {
-      String[] vertSrc0 = PApplet.loadStrings(url.openStream());
-      return preprocessVertexSource(vertSrc0, version, versionSuffix);
-    } catch (IOException e) {
-      PGraphics.showException("Cannot load vertex shader " + url.getFile());
-    }
-    return null;
-  }
+  // @Override
+  // protected String[] loadFragmentShader(URL url, int version, String versionSuffix) {
+  //   try {
+  //     String[] fragSrc0 = PApplet.loadStrings(url.openStream());
+  //     return preprocessFragmentSource(fragSrc0, version, versionSuffix);
+  //   } catch (IOException e) {
+  //     PGraphics.showException("Cannot load fragment shader " + url.getFile());
+  //   }
+  //   return null;
+  // }
+
+
+  // @Override
+  // protected String[] loadVertexShader(URL url, int version, String versionSuffix) {
+  //   try {
+  //     String[] vertSrc0 = PApplet.loadStrings(url.openStream());
+  //     return preprocessVertexSource(vertSrc0, version, versionSuffix);
+  //   } catch (IOException e) {
+  //     PGraphics.showException("Cannot load vertex shader " + url.getFile());
+  //   }
+  //   return null;
+  // }
 
 
 

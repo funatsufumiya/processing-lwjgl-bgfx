@@ -29,7 +29,8 @@ sourceSets {
     }
     example {
         java {
-            srcDirs = ['example']
+            // srcDirs = ['example']
+            srcDirs = ['examples/LWJGL-test/src']
         }
     }
 }
@@ -47,5 +48,5 @@ tasks.register('buildExample', JavaCompile) {
 
 task runExample(type: JavaExec) {
     classpath = sourceSets.example.runtimeClasspath
-    main = 'com.example.Example'
+    main = 'test.PSketch'
 }
