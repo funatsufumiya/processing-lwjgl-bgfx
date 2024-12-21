@@ -1,4 +1,4 @@
-## Processing LWJGL Library (+OpenGL, Gradle fork)
+## Processing LWJGL Library (GLFW+OpenGL, Gradle fork)
 
 This is based on [processing-lwjgl](https://github.com/codeanticode/processing-lwjgl)
 
