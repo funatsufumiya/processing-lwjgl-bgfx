@@ -72,3 +72,8 @@ task runExample(type: JavaExec) {
     classpath = sourceSets.example.runtimeClasspath
     main = 'test.PSketch'
 }
+
+task runHelloBGFX(type: JavaExec) {
+    classpath = sourceSets.example.runtimeClasspath
+    main = 'test.HelloBGFX'
+}

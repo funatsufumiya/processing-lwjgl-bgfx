@@ -1,7 +1,7 @@
 package codeanticode.lwjgl.tess;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
+// import org.lwjgl.opengl.GL11;
+// import org.lwjgl.opengl.GL30;
 
 public class PGLU {
   public static final int GLU_FALSE = 0;
@@ -139,21 +139,25 @@ public class PGLU {
   }
 
   public static String gluErrorString( int errorCode ) {
-    if( errorCode == 0 ) {
-      return ("no error");
-    }
-    if( (errorCode >= GL11.GL_INVALID_ENUM) && (errorCode <= GL30.GL_INVALID_FRAMEBUFFER_OPERATION) ) {
-      return (glErrorStrings[errorCode - GL11.GL_INVALID_ENUM]);
-    }
-    if( errorCode == 0x8031 /* GL.GL_TABLE_TOO_LARGE */ ) {
-      return ("table too large");
-    }
-    if( (errorCode >= GLU_INVALID_ENUM) && (errorCode <= GLU_INVALID_OPERATION) ) {
-      return (gluErrorStrings[errorCode - GLU_INVALID_ENUM]);
-    }
-    if( (errorCode >= GLU_TESS_ERROR1) && (errorCode <= GLU_TESS_ERROR8) ) {
-        return (gluTessErrors[errorCode - (GLU_TESS_ERROR1 - 1)]);
-    }
-    return ("error ("+errorCode+")");
+    // if( errorCode == 0 ) {
+    //   return ("no error");
+    // }
+    // if( (errorCode >= GL11.GL_INVALID_ENUM) && (errorCode <= GL30.GL_INVALID_FRAMEBUFFER_OPERATION) ) {
+    //   return (glErrorStrings[errorCode - GL11.GL_INVALID_ENUM]);
+    // }
+    // if( errorCode == 0x8031 /* GL.GL_TABLE_TOO_LARGE */ ) {
+    //   return ("table too large");
+    // }
+    // if( (errorCode >= GLU_INVALID_ENUM) && (errorCode <= GLU_INVALID_OPERATION) ) {
+    //   return (gluErrorStrings[errorCode - GLU_INVALID_ENUM]);
+    // }
+    // if( (errorCode >= GLU_TESS_ERROR1) && (errorCode <= GLU_TESS_ERROR8) ) {
+    //     return (gluTessErrors[errorCode - (GLU_TESS_ERROR1 - 1)]);
+    // }
+    // return ("error ("+errorCode+")");
+
+    throw new RuntimeException("gluErrorString() unimplemented for BGFX");
+
+    // return ("error ("+errorCode+")");
   }
 }

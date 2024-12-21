@@ -54,7 +54,10 @@
 
 package codeanticode.lwjgl.tess;
 
-import org.lwjgl.opengl.GL11;
+// import org.lwjgl.opengl.GL11;
+
+import org.apache.commons.lang.NotImplementedException;
+
 
 class Render {
     private static final boolean USE_OPTIMIZED_CODE_PATH = false;
@@ -291,85 +294,91 @@ class Render {
 
 
     static void RenderLonelyTriangles(GLUtessellatorImpl tess, GLUface f) {
-        /* Now we render all the separate triangles which could not be
-         * grouped into a triangle fan or strip.
-         */
-        GLUhalfEdge e;
-        int newState;
-        int edgeState = -1;    /* force edge state output for first vertex */
+        // /* Now we render all the separate triangles which could not be
+        //  * grouped into a triangle fan or strip.
+        //  */
+        // GLUhalfEdge e;
+        // int newState;
+        // int edgeState = -1;    /* force edge state output for first vertex */
+        
+        // tess.callBeginOrBeginData(GL11.GL_TRIANGLES);
+        
+        // for (; f != null; f = f.trail) {
+        //     /* Loop once for each edge (there will always be 3 edges) */
+        
+        //     e = f.anEdge;
+        //     do {
+        //         if (tess.flagBoundary) {
+        //             /* Set the "edge state" to true just before we output the
+        //              * first vertex of each edge on the polygon boundary.
+        //              */
+        //             newState = (!e.Sym.Lface.inside) ? 1 : 0;
+        //             if (edgeState != newState) {
+        //                 edgeState = newState;
+        //                 tess.callEdgeFlagOrEdgeFlagData( edgeState != 0);
+        //             }
+        //         }
+        //         tess.callVertexOrVertexData( e.Org.data);
+        
+        //         e = e.Lnext;
+        //     } while (e != f.anEdge);
+        // }
+        // tess.callEndOrEndData();
 
-        tess.callBeginOrBeginData(GL11.GL_TRIANGLES);
-
-        for (; f != null; f = f.trail) {
-            /* Loop once for each edge (there will always be 3 edges) */
-
-            e = f.anEdge;
-            do {
-                if (tess.flagBoundary) {
-                    /* Set the "edge state" to true just before we output the
-                     * first vertex of each edge on the polygon boundary.
-                     */
-                    newState = (!e.Sym.Lface.inside) ? 1 : 0;
-                    if (edgeState != newState) {
-                        edgeState = newState;
-                        tess.callEdgeFlagOrEdgeFlagData( edgeState != 0);
-                    }
-                }
-                tess.callVertexOrVertexData( e.Org.data);
-
-                e = e.Lnext;
-            } while (e != f.anEdge);
-        }
-        tess.callEndOrEndData();
+        throw new NotImplementedException("RenderLonelyTriangles() unimplemented for BGFX");
     }
 
     private static class RenderFan implements renderCallBack {
         public void render(GLUtessellatorImpl tess, GLUhalfEdge e, long size) {
-            /* Render as many CCW triangles as possible in a fan starting from
-             * edge "e".  The fan *should* contain exactly "size" triangles
-             * (otherwise we've goofed up somewhere).
-             */
-            tess.callBeginOrBeginData(GL11.GL_TRIANGLE_FAN);
-            tess.callVertexOrVertexData( e.Org.data);
-            tess.callVertexOrVertexData( e.Sym.Org.data);
+            // /* Render as many CCW triangles as possible in a fan starting from
+            //  * edge "e".  The fan *should* contain exactly "size" triangles
+            //  * (otherwise we've goofed up somewhere).
+            //  */
+            // tess.callBeginOrBeginData(GL11.GL_TRIANGLE_FAN);
+            // tess.callVertexOrVertexData( e.Org.data);
+            // tess.callVertexOrVertexData( e.Sym.Org.data);
 
-            while (!Marked(e.Lface)) {
-                e.Lface.marked = true;
-                --size;
-                e = e.Onext;
-                tess.callVertexOrVertexData( e.Sym.Org.data);
-            }
+            // while (!Marked(e.Lface)) {
+            //     e.Lface.marked = true;
+            //     --size;
+            //     e = e.Onext;
+            //     tess.callVertexOrVertexData( e.Sym.Org.data);
+            // }
 
-            assert (size == 0);
-            tess.callEndOrEndData();
+            // assert (size == 0);
+            // tess.callEndOrEndData();
+
+            throw new NotImplementedException("RenderFan::render() unimplemented for BGFX");
         }
     }
 
     private static class RenderStrip implements renderCallBack {
         public void render(GLUtessellatorImpl tess, GLUhalfEdge e, long size) {
-            /* Render as many CCW triangles as possible in a strip starting from
-             * edge "e".  The strip *should* contain exactly "size" triangles
-             * (otherwise we've goofed up somewhere).
-             */
-            tess.callBeginOrBeginData(GL11.GL_TRIANGLE_STRIP);
-            tess.callVertexOrVertexData( e.Org.data);
-            tess.callVertexOrVertexData( e.Sym.Org.data);
+            // /* Render as many CCW triangles as possible in a strip starting from
+            //  * edge "e".  The strip *should* contain exactly "size" triangles
+            //  * (otherwise we've goofed up somewhere).
+            //  */
+            // tess.callBeginOrBeginData(GL11.GL_TRIANGLE_STRIP);
+            // tess.callVertexOrVertexData( e.Org.data);
+            // tess.callVertexOrVertexData( e.Sym.Org.data);
 
-            while (!Marked(e.Lface)) {
-                e.Lface.marked = true;
-                --size;
-                e = e.Lnext.Sym;
-                tess.callVertexOrVertexData( e.Org.data);
-                if (Marked(e.Lface)) break;
+            // while (!Marked(e.Lface)) {
+            //     e.Lface.marked = true;
+            //     --size;
+            //     e = e.Lnext.Sym;
+            //     tess.callVertexOrVertexData( e.Org.data);
+            //     if (Marked(e.Lface)) break;
 
-                e.Lface.marked = true;
-                --size;
-                e = e.Onext;
-                tess.callVertexOrVertexData( e.Sym.Org.data);
-            }
+            //     e.Lface.marked = true;
+            //     --size;
+            //     e = e.Onext;
+            //     tess.callVertexOrVertexData( e.Sym.Org.data);
+            // }
 
-            assert (size == 0);
-            tess.callEndOrEndData();
+            // assert (size == 0);
+            // tess.callEndOrEndData();
+
+            throw new NotImplementedException("RenderStrip::render() unimplemented for BGFX");
         }
     }
 
@@ -380,20 +389,22 @@ class Render {
  * provided as callbacks (see the api).
  */
     public static void __gl_renderBoundary(GLUtessellatorImpl tess, GLUmesh mesh) {
-        GLUface f;
-        GLUhalfEdge e;
+        // GLUface f;
+        // GLUhalfEdge e;
 
-        for (f = mesh.fHead.next; f != mesh.fHead; f = f.next) {
-            if (f.inside) {
-                tess.callBeginOrBeginData(GL11.GL_LINE_LOOP);
-                e = f.anEdge;
-                do {
-                    tess.callVertexOrVertexData( e.Org.data);
-                    e = e.Lnext;
-                } while (e != f.anEdge);
-                tess.callEndOrEndData();
-            }
-        }
+        // for (f = mesh.fHead.next; f != mesh.fHead; f = f.next) {
+        //     if (f.inside) {
+        //         tess.callBeginOrBeginData(GL11.GL_LINE_LOOP);
+        //         e = f.anEdge;
+        //         do {
+        //             tess.callVertexOrVertexData( e.Org.data);
+        //             e = e.Lnext;
+        //         } while (e != f.anEdge);
+        //         tess.callEndOrEndData();
+        //     }
+        // }
+
+        throw new NotImplementedException("__gl_renderBoundary() unimplemented for BGFX");
     }
 
 
@@ -489,70 +500,72 @@ class Render {
  * output is provided as callbacks (see the api).
  */
     public static boolean __gl_renderCache(GLUtessellatorImpl tess) {
-        CachedVertex[] v = tess.cache;
-//            CachedVertex vn = v0 + tess.cacheCount;
-        int vn = tess.cacheCount;
-//            CachedVertex vc;
-        int vc;
-        double[] norm = new double[3];
-        int sign;
+//         CachedVertex[] v = tess.cache;
+// //            CachedVertex vn = v0 + tess.cacheCount;
+//         int vn = tess.cacheCount;
+// //            CachedVertex vc;
+//         int vc;
+//         double[] norm = new double[3];
+//         int sign;
 
-        if (tess.cacheCount < 3) {
-            /* Degenerate contour -- no output */
-            return true;
-        }
+//         if (tess.cacheCount < 3) {
+//             /* Degenerate contour -- no output */
+//             return true;
+//         }
 
-        norm[0] = tess.normal[0];
-        norm[1] = tess.normal[1];
-        norm[2] = tess.normal[2];
-        if (norm[0] == 0 && norm[1] == 0 && norm[2] == 0) {
-            ComputeNormal( tess, norm, false);
-        }
+//         norm[0] = tess.normal[0];
+//         norm[1] = tess.normal[1];
+//         norm[2] = tess.normal[2];
+//         if (norm[0] == 0 && norm[1] == 0 && norm[2] == 0) {
+//             ComputeNormal( tess, norm, false);
+//         }
 
-        sign = ComputeNormal( tess, norm, true);
-        if (sign == SIGN_INCONSISTENT) {
-            /* Fan triangles did not have a consistent orientation */
-            return false;
-        }
-        if (sign == 0) {
-            /* All triangles were degenerate */
-            return true;
-        }
+//         sign = ComputeNormal( tess, norm, true);
+//         if (sign == SIGN_INCONSISTENT) {
+//             /* Fan triangles did not have a consistent orientation */
+//             return false;
+//         }
+//         if (sign == 0) {
+//             /* All triangles were degenerate */
+//             return true;
+//         }
 
-        if ( !USE_OPTIMIZED_CODE_PATH ) {
-            return false;
-        } else {
-            /* Make sure we do the right thing for each winding rule */
-            switch (tess.windingRule) {
-                case PGLU.GLU_TESS_WINDING_ODD:
-                case PGLU.GLU_TESS_WINDING_NONZERO:
-                    break;
-                case PGLU.GLU_TESS_WINDING_POSITIVE:
-                    if (sign < 0) return true;
-                    break;
-                case PGLU.GLU_TESS_WINDING_NEGATIVE:
-                    if (sign > 0) return true;
-                    break;
-                case PGLU.GLU_TESS_WINDING_ABS_GEQ_TWO:
-                    return true;
-            }
+//         if ( !USE_OPTIMIZED_CODE_PATH ) {
+//             return false;
+//         } else {
+//             /* Make sure we do the right thing for each winding rule */
+//             switch (tess.windingRule) {
+//                 case PGLU.GLU_TESS_WINDING_ODD:
+//                 case PGLU.GLU_TESS_WINDING_NONZERO:
+//                     break;
+//                 case PGLU.GLU_TESS_WINDING_POSITIVE:
+//                     if (sign < 0) return true;
+//                     break;
+//                 case PGLU.GLU_TESS_WINDING_NEGATIVE:
+//                     if (sign > 0) return true;
+//                     break;
+//                 case PGLU.GLU_TESS_WINDING_ABS_GEQ_TWO:
+//                     return true;
+//             }
 
-            tess.callBeginOrBeginData( tess.boundaryOnly ? GL11.GL_LINE_LOOP
-                    : (tess.cacheCount > 3) ? GL11.GL_TRIANGLE_FAN
-                    : GL11.GL_TRIANGLES);
+//             tess.callBeginOrBeginData( tess.boundaryOnly ? GL11.GL_LINE_LOOP
+//                     : (tess.cacheCount > 3) ? GL11.GL_TRIANGLE_FAN
+//                     : GL11.GL_TRIANGLES);
 
-            tess.callVertexOrVertexData( v[0].data);
-            if (sign > 0) {
-                for (vc = 1; vc < vn; ++vc) {
-                    tess.callVertexOrVertexData( v[vc].data);
-                }
-            } else {
-                for (vc = vn - 1; vc > 0; --vc) {
-                    tess.callVertexOrVertexData( v[vc].data);
-                }
-            }
-            tess.callEndOrEndData();
-            return true;
-        }
+//             tess.callVertexOrVertexData( v[0].data);
+//             if (sign > 0) {
+//                 for (vc = 1; vc < vn; ++vc) {
+//                     tess.callVertexOrVertexData( v[vc].data);
+//                 }
+//             } else {
+//                 for (vc = vn - 1; vc > 0; --vc) {
+//                     tess.callVertexOrVertexData( v[vc].data);
+//                 }
+//             }
+//             tess.callEndOrEndData();
+//             return true;
+//         }
+
+        throw new NotImplementedException("__gl_renderCache() unimplemented for BGFX");
     }
 }
