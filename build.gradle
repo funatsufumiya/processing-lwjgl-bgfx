@@ -5,15 +5,16 @@ plugins {
 group 'com.example'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.5
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation fileTree(dir: 'lib', include: ['lwjgl-glfw.jar', 'lwjgl-opengl.jar', 'lwjgl.jar'])
-    implementation project(':processing-core')
+    // implementation fileTree(dir: 'lib', include: ['lwjgl-glfw.jar', 'lwjgl-opengl.jar', 'lwjgl.jar'])
+    implementation group: 'org.lwjgl', name: 'lwjgl', version: '3.3.5'
+    implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.3.5'
+    implementation group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.3.5'
+    implementation group: 'org.processing', name: 'core', version: '3.3.7'
     testImplementation 'junit:junit:4.12'
 }
 
