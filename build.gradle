@@ -73,6 +73,14 @@ task runExample(type: JavaExec) {
     main = 'test.PSketch'
 }
 
+// just alias of buildExample
+tasks.register('buildHelloBGFX', JavaCompile) {
+    source = sourceSets.example.java
+    classpath = sourceSets.example.compileClasspath + configurations.compileClasspath
+    destinationDir = file("${buildDir}/classes/example")
+    options.encoding = 'UTF-8'
+}
+
 task runHelloBGFX(type: JavaExec) {
     classpath = sourceSets.example.runtimeClasspath
     main = 'test.HelloBGFX'

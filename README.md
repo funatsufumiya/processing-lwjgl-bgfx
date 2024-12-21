@@ -11,10 +11,20 @@ NOTE: Currently, most of the PLWJGL code is commented out, and throws `NotImplem
 
 ### Run
 
+#### Processing Example
+
 ```
 ./gradlew buildExample
 ./gradlew runExample
 ```
+
+#### Plain GLFW/BGFX Example
+
+```
+./gradlew buildHelloBGFX
+./gradlew runHelloBGFX
+```
+
 
 -----
 
