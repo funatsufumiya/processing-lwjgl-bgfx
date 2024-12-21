@@ -1,9 +1,7 @@
 package test;
 
-import java.awt.Desktop;
-import java.awt.desktop.QuitEvent;
-import java.awt.desktop.QuitHandler;
-import java.awt.desktop.QuitResponse;
+import org.lwjgl.system.Configuration;
+import org.lwjgl.system.Platform;
 
 import codeanticode.lwjgl.PLWJGL;
 import processing.core.PApplet;
@@ -40,27 +38,20 @@ public class PSketch extends PApplet {
 //    rect(mouseX, mouseY, 150, 150); 
 //    ellipse(mouseX, mouseY, 100, 100);
   }
+
+  // static {
+  //     System.setProperty("java.awt.headless", "true");
+  // }
   
   public static void main(final String[] args) {    
+      // System.setProperty("org.lwjgl.util.Debug","true");
+
+      // System.out.println("setting glfw_async");
+
+      if (Platform.get() == Platform.MACOSX) {
+          Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+      }
+
       PApplet.main("test.PSketch");
   }    
-  // static boolean attemptedQuit;
-
-  public static void init(final PApplet sketch) {
-      Desktop desktop = Desktop.getDesktop();
-      desktop.setQuitHandler(
-          new QuitHandler() {
-            @Override
-            public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
-                sketch.exit();
-                // if (PApplet.uncaughtThrowable == null && !attemptedQuit) {
-                //     response.cancelQuit();
-                //     attemptedQuit = true;
-                // } else {
-                //     response.performQuit();
-                // }
-                response.performQuit();
-            }
-          });
-  }
 }
