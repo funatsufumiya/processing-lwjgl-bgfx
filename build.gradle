@@ -17,22 +17,26 @@ project.ext.lwjglNatives2 = "natives-windows"
 dependencies {
     implementation group: 'org.lwjgl', name: 'lwjgl', version: '3.3.5'
     implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.3.5'
-    implementation group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.3.5'
+    // implementation group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.3.5'
+    implementation group: 'org.lwjgl', name: 'lwjgl-bgfx', version: '3.3.5'
     implementation(group: 'org.processing', name: 'core', version: '4.3.1') {
         exclude group: 'org.jogamp.jogl'
         exclude group: 'org.jogamp.gluegen'
     }
+    // only for NotImplementedException
+    implementation group: 'commons-lang', name: 'commons-lang', version: '2.6'
+
     testImplementation 'junit:junit:4.12'
 
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives"
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
-    // runtimeOnly "org.lwjgl:lwjgl-bgfx::$lwjglNatives"
+    // runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives"
+    runtimeOnly "org.lwjgl:lwjgl-bgfx::$lwjglNatives"
 
     runtimeOnly "org.lwjgl:lwjgl::$lwjglNatives2"
     runtimeOnly "org.lwjgl:lwjgl-glfw::$lwjglNatives2"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives2"
-    // runtimeOnly "org.lwjgl:lwjgl-bgfx::$lwjglNatives2"
+    // runtimeOnly "org.lwjgl:lwjgl-opengl::$lwjglNatives2"
+    runtimeOnly "org.lwjgl:lwjgl-bgfx::$lwjglNatives2"
 }
 
 sourceSets {
