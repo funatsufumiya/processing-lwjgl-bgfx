@@ -1087,10 +1087,10 @@ public class PLWJGL extends PGL {
   }
 
   @Override
-  public String getString(int __name) {
-    // return glGetString(name);
+  public String getString(int key) {
+    // return glGetString(key);
 
-    int id = __name;
+    int id = key;
     String name = DummyGLConstantsNames.getName(id);
     String hex = Integer.toHexString(id).toUpperCase();
 

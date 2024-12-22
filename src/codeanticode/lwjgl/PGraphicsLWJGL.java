@@ -24,8 +24,9 @@
 
 package codeanticode.lwjgl;
 
-import processing.core.*;
-import processing.opengl.*;
+import processing.core.PSurface;
+import processing.opengl.PGL;
+import processing.opengl.PGraphicsOpenGL;
 
 /**
  * OpenGL renderer.
@@ -43,5 +44,15 @@ public class PGraphicsLWJGL extends PGraphicsOpenGL {
   
   protected PGL createPGL(PGraphicsOpenGL pg) {
     return new PLWJGL(pg);
+  }
+
+  @Override
+  public void beginDraw() {
+    super.beginDraw();
+  }
+
+  @Override
+  public void endDraw() {
+    super.endDraw();
   }
 }
