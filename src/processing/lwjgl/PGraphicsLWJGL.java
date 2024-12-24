@@ -22,7 +22,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package codeanticode.lwjgl;
+package processing.lwjgl;
 
 import processing.core.*;
 import processing.opengl.*;

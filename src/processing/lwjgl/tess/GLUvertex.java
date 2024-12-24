@@ -1,6 +1,5 @@
 /*
 * Portions Copyright (C) 2003-2006 Sun Microsystems, Inc.
-
 * All rights reserved.
 */
 
@@ -53,18 +52,16 @@
 ** Processing integration: Andres Colubri, February 2012
 */
 
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
-/**
- * The <b>GLUtessellator</b> object is used to hold the data, such as the
- * vertices, edges and callback objects, to describe and tessellate complex
- * polygons.  A <b>GLUtessellator</b> object is used with the
- * {@link PGLU GLU} tessellator methods and
- * {@link PGLUtessellatorCallback GLU callbacks}.
- *
- * @author Eric Veach, July 1994
- * @author Java Port: Pepijn Van Eechhoudt, July 2003
- * @author Java Port: Nathan Parker Burg, August 2003
- * @author Processing integration: Andres Colubri, February 2012
- */
-public interface PGLUtessellator {}
+class GLUvertex {
+    public GLUvertex next;        /* next vertex (never NULL) */
+    public GLUvertex prev;        /* previous vertex (never NULL) */
+    public GLUhalfEdge anEdge;    /* a half-edge with this origin */
+    public Object data;        /* client's data */
+
+    /* Internal data (keep hidden) */
+    public double[] coords = new double[3];    /* vertex location in 3D */
+    public double s, t;        /* projection onto the sweep plane */
+    public int pqHandle;    /* to allow deletion from priority queue */
+}

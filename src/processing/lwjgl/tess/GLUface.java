@@ -48,40 +48,19 @@
 **
 ** Author: Eric Veach, July 1994
 ** Java Port: Pepijn Van Eeckhoudt, July 2003
-** Java Port: Nathan Parker Burg, August 2003
 ** Processing integration: Andres Colubri, February 2012
 */
 
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
-/**
- * The <b>GLUtessellatorCallbackAdapter</b> provides a default implementation of
- * {@link PGLUtessellatorCallback GLUtessellatorCallback}
- * with empty callback methods.  This class can be extended to provide user
- * defined callback methods.
- *
- * @author Eric Veach, July 1994
- * @author Java Port: Pepijn Van Eechhoudt, July 2003
- * @author Java Port: Nathan Parker Burg, August 2003
- * @author Processing integration: Andres Colubri, February 2012
- */
+class GLUface {
+    public GLUface next;        /* next face (never NULL) */
+    public GLUface prev;        /* previous face (never NULL) */
+    public GLUhalfEdge anEdge;    /* a half edge with this left face */
+    public Object data;        /* room for client's data */
 
-public class PGLUtessellatorCallbackAdapter implements PGLUtessellatorCallback {
-    public void begin(int type) {}
-    public void edgeFlag(boolean boundaryEdge) {}
-    public void vertex(Object vertexData) {}
-    public void end() {}
-//  public void mesh(jogamp.opengl.tessellator.GLUmesh mesh) {}
-    public void error(int errnum) {}
-    public void combine(double[] coords, Object[] data,
-                            float[] weight, Object[] outData) {}
-    public void beginData(int type, Object polygonData) {}
-    public void edgeFlagData(boolean boundaryEdge,
-                                 Object polygonData) {}
-    public void vertexData(Object vertexData, Object polygonData) {}
-    public void endData(Object polygonData) {}
-    public void errorData(int errnum, Object polygonData) {}
-    public void combineData(double[] coords, Object[] data,
-                                float[] weight, Object[] outData,
-                                Object polygonData) {}
+    /* Internal data (keep hidden) */
+    public GLUface trail;        /* "stack" for conversion to strips */
+    public boolean marked;        /* flag for conversion to strips */
+    public boolean inside;        /* this face is in the polygon interior */
 }

@@ -1,5 +1,6 @@
 /*
 * Portions Copyright (C) 2003-2006 Sun Microsystems, Inc.
+
 * All rights reserved.
 */
 
@@ -52,9 +53,11 @@
 ** Processing integration: Andres Colubri, February 2012
 */
 
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
-class CachedVertex {
-    public double[] coords = new double[3];
-    public Object data;
+class GLUmesh {
+    GLUvertex vHead = new GLUvertex();        /* dummy header for vertex list */
+    GLUface fHead = new GLUface();        /* dummy header for face list */
+    GLUhalfEdge eHead = new GLUhalfEdge(true);        /* dummy header for edge list */
+    GLUhalfEdge eHeadSym = new GLUhalfEdge(false);    /* and its symmetric counterpart */
 }

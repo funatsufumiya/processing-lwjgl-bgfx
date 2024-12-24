@@ -20,7 +20,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package codeanticode.lwjgl;
+package processing.lwjgl;
 
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -431,9 +431,9 @@ import org.lwjgl.opengl.GL32C;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-import codeanticode.lwjgl.tess.PGLU;
-import codeanticode.lwjgl.tess.PGLUtessellator;
-import codeanticode.lwjgl.tess.PGLUtessellatorCallbackAdapter;
+import processing.lwjgl.tess.PGLU;
+import processing.lwjgl.tess.PGLUtessellator;
+import processing.lwjgl.tess.PGLUtessellatorCallbackAdapter;
 import processing.core.PApplet;
 import processing.core.PGraphics;
 import processing.opengl.PGL;
@@ -449,8 +449,8 @@ import processing.opengl.PGraphicsOpenGL;
  */
 public class PLWJGL extends PGL {
   
-  static public final String P2D = "codeanticode.lwjgl.PGraphicsLWJGL2D";
-  static public final String P3D = "codeanticode.lwjgl.PGraphicsLWJGL3D";  
+  static public final String P2D = "processing.lwjgl.PGraphicsLWJGL2D";
+  static public final String P3D = "processing.lwjgl.PGraphicsLWJGL3D";  
   
   // ........................................................
 

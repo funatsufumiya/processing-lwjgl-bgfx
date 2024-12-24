@@ -52,16 +52,10 @@
 ** Processing integration: Andres Colubri, February 2012
 */
 
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
-class GLUvertex {
-    public GLUvertex next;        /* next vertex (never NULL) */
-    public GLUvertex prev;        /* previous vertex (never NULL) */
-    public GLUhalfEdge anEdge;    /* a half-edge with this origin */
-    public Object data;        /* client's data */
-
-    /* Internal data (keep hidden) */
-    public double[] coords = new double[3];    /* vertex location in 3D */
-    public double s, t;        /* projection onto the sweep plane */
-    public int pqHandle;    /* to allow deletion from priority queue */
+class DictNode {
+    Object key;
+    DictNode next;
+    DictNode prev;
 }

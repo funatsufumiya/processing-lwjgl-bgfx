@@ -51,7 +51,7 @@
 ** Java Port: Nathan Parker Burg, August 2003
 ** Processing integration: Andres Colubri, February 2012
 */
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
 /**
  * <b>GLUtessellatorCallback</b> interface provides methods that the user will

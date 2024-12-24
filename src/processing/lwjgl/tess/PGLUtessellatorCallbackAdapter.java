@@ -48,25 +48,40 @@
 **
 ** Author: Eric Veach, July 1994
 ** Java Port: Pepijn Van Eeckhoudt, July 2003
+** Java Port: Nathan Parker Burg, August 2003
 ** Processing integration: Andres Colubri, February 2012
 */
 
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
-class GLUhalfEdge {
-    public GLUhalfEdge next;        /* doubly-linked list (prev==Sym->next) */
-    public GLUhalfEdge Sym;        /* same edge, opposite direction */
-    public GLUhalfEdge Onext;        /* next edge CCW around origin */
-    public GLUhalfEdge Lnext;        /* next edge CCW around left face */
-    public GLUvertex Org;        /* origin vertex (Overtex too long) */
-    public GLUface Lface;        /* left face */
+/**
+ * The <b>GLUtessellatorCallbackAdapter</b> provides a default implementation of
+ * {@link PGLUtessellatorCallback GLUtessellatorCallback}
+ * with empty callback methods.  This class can be extended to provide user
+ * defined callback methods.
+ *
+ * @author Eric Veach, July 1994
+ * @author Java Port: Pepijn Van Eechhoudt, July 2003
+ * @author Java Port: Nathan Parker Burg, August 2003
+ * @author Processing integration: Andres Colubri, February 2012
+ */
 
-    /* Internal data (keep hidden) */
-    public ActiveRegion activeRegion;    /* a region with this upper edge (sweep.c) */
-    public int winding;    /* change in winding number when crossing */
-    public boolean first;
-
-    public GLUhalfEdge(boolean first) {
-        this.first = first;
-    }
+public class PGLUtessellatorCallbackAdapter implements PGLUtessellatorCallback {
+    public void begin(int type) {}
+    public void edgeFlag(boolean boundaryEdge) {}
+    public void vertex(Object vertexData) {}
+    public void end() {}
+//  public void mesh(jogamp.opengl.tessellator.GLUmesh mesh) {}
+    public void error(int errnum) {}
+    public void combine(double[] coords, Object[] data,
+                            float[] weight, Object[] outData) {}
+    public void beginData(int type, Object polygonData) {}
+    public void edgeFlagData(boolean boundaryEdge,
+                                 Object polygonData) {}
+    public void vertexData(Object vertexData, Object polygonData) {}
+    public void endData(Object polygonData) {}
+    public void errorData(int errnum, Object polygonData) {}
+    public void combineData(double[] coords, Object[] data,
+                                float[] weight, Object[] outData,
+                                Object polygonData) {}
 }

@@ -3,7 +3,7 @@ package test;
 import org.lwjgl.system.Configuration;
 import org.lwjgl.system.Platform;
 
-import codeanticode.lwjgl.PLWJGL;
+import processing.lwjgl.PLWJGL;
 import processing.core.PApplet;
 import processing.opengl.PShader;
 

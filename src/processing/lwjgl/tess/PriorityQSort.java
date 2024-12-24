@@ -48,7 +48,7 @@
 ** Processing integration: Andres Colubri, February 2012
 */
 
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
 class PriorityQSort extends PriorityQ {
     PriorityQHeap heap;

@@ -51,16 +51,22 @@
 ** Processing integration: Andres Colubri, February 2012
 */
 
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
-class GLUface {
-    public GLUface next;        /* next face (never NULL) */
-    public GLUface prev;        /* previous face (never NULL) */
-    public GLUhalfEdge anEdge;    /* a half edge with this left face */
-    public Object data;        /* room for client's data */
+class GLUhalfEdge {
+    public GLUhalfEdge next;        /* doubly-linked list (prev==Sym->next) */
+    public GLUhalfEdge Sym;        /* same edge, opposite direction */
+    public GLUhalfEdge Onext;        /* next edge CCW around origin */
+    public GLUhalfEdge Lnext;        /* next edge CCW around left face */
+    public GLUvertex Org;        /* origin vertex (Overtex too long) */
+    public GLUface Lface;        /* left face */
 
     /* Internal data (keep hidden) */
-    public GLUface trail;        /* "stack" for conversion to strips */
-    public boolean marked;        /* flag for conversion to strips */
-    public boolean inside;        /* this face is in the polygon interior */
+    public ActiveRegion activeRegion;    /* a region with this upper edge (sweep.c) */
+    public int winding;    /* change in winding number when crossing */
+    public boolean first;
+
+    public GLUhalfEdge(boolean first) {
+        this.first = first;
+    }
 }

@@ -1,4 +1,4 @@
-package codeanticode.lwjgl.tess;
+package processing.lwjgl.tess;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL30;

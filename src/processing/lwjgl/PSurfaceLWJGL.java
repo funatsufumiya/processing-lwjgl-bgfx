@@ -20,7 +20,7 @@
   Boston, MA  02111-1307  USA
 */
 
-package codeanticode.lwjgl;
+package processing.lwjgl;
 
 import java.io.File;
 import java.nio.ByteOrder;
