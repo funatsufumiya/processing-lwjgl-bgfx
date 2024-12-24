@@ -24,6 +24,10 @@
 
 package codeanticode.lwjgl;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import processing.core.PGraphics;
 import processing.core.PSurface;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
@@ -87,5 +91,43 @@ public class PGraphicsLWJGL extends PGraphicsOpenGL {
     }
 
     glParamsRead = true;
+  }
+
+  // protected static Logger getLogger() {
+  //   return Logger.getLogger("PGraphicsLWJGL");
+  // }
+
+  protected static void logWarning(String message) {
+    // getLogger().warning(message);
+    PGraphics.showWarning("(PGraphicsLWJGL) [Warn] " + message);
+  }
+
+  protected static void logInfo(String message) {
+    // getLogger().info(message);
+    PGraphics.showWarning("(PGraphicsLWJGL) [Info] " + message);
+  }
+
+  protected static Map<String, Boolean> warningMap = new HashMap<String, Boolean>();
+
+  public static void logWarningOnce(String onceKey, String message) {
+    if (!warningMap.containsKey(onceKey)) {
+      warningMap.put(onceKey, true);
+      logWarning(message);
+    }
+  }
+
+  @Override
+  protected void checkSettings() {
+    logWarningOnce("checkSettings()", "checkSettings() currently does nothing for BGFX");
+  }
+
+  @Override
+  protected void setGLSettings() {
+    logWarningOnce("setGLSettings()", "setGLSettings() currently does nothing for BGFX");
+  }
+
+  @Override
+  protected void blendModeImpl() {
+    logWarningOnce("blendModeImpl()", "blendMode() currently does nothing for BGFX");
   }
 }

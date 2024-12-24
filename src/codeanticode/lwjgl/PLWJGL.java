@@ -41,6 +41,10 @@ import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.bgfx.BGFX;
+import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_COLOR;
+import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_DEPTH;
+import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_STENCIL;
 
 import static codeanticode.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
 import static codeanticode.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
@@ -1024,7 +1028,12 @@ public class PLWJGL extends PGL {
     // if (-1 < value) {
     //   glEnable(value);
     // }
-    throw new NotImplementedException("enable() unimplemented for BGFX");
+
+    String name = DummyGLConstantsNames.getName(value);
+    logWarning("enable(" + name + ") was called" +
+      " (" + name + " = " + value + "), but it does nothing in BGFX");
+
+    // throw new NotImplementedException("enable() unimplemented for BGFX");
   }
 
   @Override
@@ -1032,7 +1041,12 @@ public class PLWJGL extends PGL {
     // if (-1 < value) {
     //   glDisable(value);
     // }
-    throw new NotImplementedException("disable() unimplemented for BGFX");
+
+    String name = DummyGLConstantsNames.getName(value);
+    logWarning("disable(" + name + ") was called" +
+      " (" + name + " = " + value + "), but it does nothing in BGFX");
+
+    // throw new NotImplementedException("disable() unimplemented for BGFX");
   }
 
   @Override
@@ -1100,16 +1114,16 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("getString() unimplemented for BGFX");
   }
 
-  // public static Logger getLogger() {
+  // protected static Logger getLogger() {
   //   return Logger.getLogger("PLWJGL");
   // }
 
-  public static void logWarning(String message) {
+  protected static void logWarning(String message) {
     // getLogger().warning(message);
     PGraphics.showWarning("(PLWJGL) [Warn] " + message);
   }
 
-  public static void logInfo(String message) {
+  protected static void logInfo(String message) {
     // getLogger().info(message);
     PGraphics.showWarning("(PLWJGL) [Info] " + message);
   }
@@ -1306,14 +1320,26 @@ public class PLWJGL extends PGL {
     // float f = getPixelScale();
     // viewportImpl((int)(f*x), (int)(f*y), (int)(f*w), (int)(f*h));
 
-    throw new NotImplementedException("viewport() unimplemented for BGFX");
+    float f = getPixelScale();
+    viewportImpl((int)(f*x), (int)(f*y), (int)(f*w), (int)(f*h));
+
+    // throw new NotImplementedException("viewport() unimplemented for BGFX");
   }
 
   @Override
   protected void viewportImpl(int x, int y, int w, int h) {
     // glViewport(x, y, w, h);
 
-    throw new NotImplementedException("viewportImpl() unimplemented for BGFX");
+    // https://github.com/bkaradzic/bgfx/issues/2107
+    // use bgfx::setScissor() uint16_t / setScissor(uint16_t _x, uint16_t _y, uint16_t _width, uint16_t _height)
+
+    // logWarningOnce("viewportImpl()", "viewportImpl() currently uses bgfx_set_scissor() instead");
+    // BGFX.bgfx_set_scissor(x, y, w, h);
+
+    logWarningOnce("viewportImpl()", "viewportImpl() currently uses bgfx_set_view_scissor(0, ...) instead");
+    BGFX.bgfx_set_view_scissor(0, x, y, w, h);
+
+    // throw new NotImplementedException("viewportImpl() unimplemented for BGFX");
   }
 
   //////////////////////////////////////////////////////////////////////////////
@@ -2015,6 +2041,7 @@ public class PLWJGL extends PGL {
   @Override
   public void blendEquationSeparate(int modeRGB, int modeAlpha) {
     // glBlendEquationSeparate(modeRGB, modeAlpha);
+
     throw new NotImplementedException("blendEquationSeparate() unimplemented for BGFX");
   }
 
@@ -2064,28 +2091,53 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("stencilMaskSeparate() unimplemented for BGFX");
   }
 
+  // create color from r, g, b, a
+  // like c++'s uint32_t _rgba = 0x000000ff
+  protected int color(int r, int g, int b, int a) {
+    return (a << 24) | (b << 16) | (g << 8) | r;
+  }
+
+  protected int color(float r, float g, float b, float a) {
+    // FIXME: consider color mode?
+    //        need research before code of glClearColor() is written
+    return color((int)(r*255), (int)(g*255), (int)(b*255), (int)(a*255));
+  }
+
   @Override
   public void clearColor(float r, float g, float b, float a) {
     // glClearColor(r, g, b, a);
-    throw new NotImplementedException("clearColor() unimplemented for BGFX");
+
+    // https://github.com/bkaradzic/bgfx/issues/448    
+    BGFX.bgfx_set_view_clear(0, BGFX_CLEAR_COLOR, color(r, g, b, a), 1.0f, 0);
+
+    // throw new NotImplementedException("clearColor() unimplemented for BGFX");
   }
 
   @Override
   public void clearDepth(float d) {
     // glClearDepth(d);
-    throw new NotImplementedException("clearDepth() unimplemented for BGFX");
+
+    BGFX.bgfx_set_view_clear(0, BGFX_CLEAR_DEPTH, 0, d, 0);
+
+    // throw new NotImplementedException("clearDepth() unimplemented for BGFX");
   }
 
   @Override
   public void clearStencil(int s) {
     // glClearStencil(s);
-    throw new NotImplementedException("clearStencil() unimplemented for BGFX");
+    
+    BGFX.bgfx_set_view_clear(0, BGFX_CLEAR_STENCIL, 0, 0, s);
+
+    // throw new NotImplementedException("clearStencil() unimplemented for BGFX");
   }
 
   @Override
   public void clear(int buf) {
     // glClear(buf);
-    throw new NotImplementedException("clear() unimplemented for BGFX");
+
+    BGFX.bgfx_touch(0);
+
+    // throw new NotImplementedException("clear() unimplemented for BGFX");
   }
 
   ///////////////////////////////////////////////////////////
