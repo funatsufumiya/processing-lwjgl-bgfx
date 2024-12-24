@@ -33,14 +33,18 @@ import java.util.function.Consumer;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.PointerBuffer;
+import static org.lwjgl.bgfx.BGFX.BGFX_NATIVE_WINDOW_HANDLE_TYPE_WAYLAND;
+import static org.lwjgl.bgfx.BGFX.BGFX_RESET_VSYNC;
+import static org.lwjgl.bgfx.BGFX.bgfx_init;
+import static org.lwjgl.bgfx.BGFX.bgfx_init_ctor;
+import org.lwjgl.bgfx.BGFXInit;
 import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.GLFW_ALPHA_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_AUTO_ICONIFY;
 import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_CLIENT_API;
-import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MAJOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CONTEXT_VERSION_MINOR;
+import static org.lwjgl.glfw.GLFW.GLFW_COCOA_RETINA_FRAMEBUFFER;
 import static org.lwjgl.glfw.GLFW.GLFW_CROSSHAIR_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
 import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
@@ -88,9 +92,9 @@ import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
 import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_ANY_PROFILE;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_API;
-import static org.lwjgl.glfw.GLFW.GLFW_OPENGL_PROFILE;
+import static org.lwjgl.glfw.GLFW.GLFW_NO_API;
+import static org.lwjgl.glfw.GLFW.GLFW_PLATFORM_COCOA;
+import static org.lwjgl.glfw.GLFW.GLFW_PLATFORM_WAYLAND;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RED_BITS;
 import static org.lwjgl.glfw.GLFW.GLFW_REFRESH_RATE;
@@ -110,6 +114,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetMonitorContentScale;
 import static org.lwjgl.glfw.GLFW.glfwGetMonitorName;
 import static org.lwjgl.glfw.GLFW.glfwGetMonitorPos;
 import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
+import static org.lwjgl.glfw.GLFW.glfwGetPlatform;
 import static org.lwjgl.glfw.GLFW.glfwGetTimerFrequency;
 import static org.lwjgl.glfw.GLFW.glfwGetTimerValue;
 import static org.lwjgl.glfw.GLFW.glfwGetVersionString;
@@ -119,7 +124,6 @@ import static org.lwjgl.glfw.GLFW.glfwGetWindowFrameSize;
 import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwHideWindow;
 import static org.lwjgl.glfw.GLFW.glfwInit;
-import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwSetCursor;
 import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
@@ -140,6 +144,10 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWFramebufferSizeCallback;
 import org.lwjgl.glfw.GLFWKeyCallback;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
+import org.lwjgl.glfw.GLFWNativeCocoa;
+import org.lwjgl.glfw.GLFWNativeWayland;
+import org.lwjgl.glfw.GLFWNativeWin32;
+import org.lwjgl.glfw.GLFWNativeX11;
 import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.glfw.GLFWWindowCloseCallback;
@@ -153,6 +161,7 @@ import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import org.lwjgl.system.MemoryUtil;
 import static org.lwjgl.system.MemoryUtil.NULL;
+import org.lwjgl.system.Platform;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -263,6 +272,63 @@ public class PSurfaceLWJGL implements PSurface {
     throw new AssertionError("This surface does not support offscreen rendering");
   }
 
+  protected void initBGFX() {
+    int width = sketch.sketchWidth();
+    int height = sketch.sketchHeight();
+    
+    try (MemoryStack stack = stackPush()) {
+      BGFXInit init = BGFXInit.malloc(stack);
+      bgfx_init_ctor(init);
+      init
+          .resolution(it -> it
+              .width(width)
+              .height(height)
+              .reset(BGFX_RESET_VSYNC));
+
+      switch (Platform.get()) {
+          case FREEBSD:
+          case LINUX:
+              if (glfwGetPlatform() == GLFW_PLATFORM_WAYLAND) {
+                  init.platformData()
+                      .ndt(GLFWNativeWayland.glfwGetWaylandDisplay())
+                      .nwh(GLFWNativeWayland.glfwGetWaylandWindow(window))
+                      .type(BGFX_NATIVE_WINDOW_HANDLE_TYPE_WAYLAND);
+              } else {
+                  init.platformData()
+                      .ndt(GLFWNativeX11.glfwGetX11Display())
+                      .nwh(GLFWNativeX11.glfwGetX11Window(window));
+              }
+              break;
+          case MACOSX:
+              // (a)
+              init.platformData()
+                  .nwh(GLFWNativeCocoa.glfwGetCocoaWindow(window));
+
+              // (b)
+
+              // long objc_msgSend = org.lwjgl.system.macosx.ObjCRuntime.getLibrary().getFunctionAddress("objc_msgSend");
+
+              // long layer = org.lwjgl.system.JNI.invokePPP(org.lwjgl.system.macosx.ObjCRuntime.objc_getClass("CAMetalLayer"), org.lwjgl.system.macosx.ObjCRuntime.sel_getUid("alloc"), objc_msgSend);
+              // org.lwjgl.system.JNI.invokePPP(layer, org.lwjgl.system.macosx.ObjCRuntime.sel_getUid("init"), objc_msgSend);
+
+              // long contentView = org.lwjgl.system.JNI.invokePPP(GLFWNativeCocoa.glfwGetCocoaWindow(window), org.lwjgl.system.macosx.ObjCRuntime.sel_getUid("contentView"), objc_msgSend);
+              // org.lwjgl.system.JNI.invokePPPV(contentView, org.lwjgl.system.macosx.ObjCRuntime.sel_getUid("setLayer:"), layer, objc_msgSend);
+
+              // init.platformData()
+              //     .nwh(layer);
+
+              break;
+          case WINDOWS:
+              init.platformData()
+                  .nwh(GLFWNativeWin32.glfwGetWin32Window(window));
+              break;
+      }
+
+      if (!bgfx_init(init)) {
+        throw new RuntimeException("Error initializing bgfx renderer");
+      }
+    }
+  }
 
   @Override
   public void initFrame(PApplet sketch) {
@@ -287,6 +353,7 @@ public class PSurfaceLWJGL implements PSurface {
     initDisplay();
 
     initWindow();
+    initBGFX();
     initInputListeners();
 
     // Initialize framerate timer
@@ -487,11 +554,15 @@ public class PSurfaceLWJGL implements PSurface {
     glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
     glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_FALSE);
 
-    glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+    // glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+    glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+    if (glfwGetPlatform() == GLFW_PLATFORM_COCOA) {
+        glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
+    }
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
+    // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+    // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_ANY_PROFILE);
 
     glfwWindowHint(GLFW_ALPHA_BITS, PGL.REQUESTED_ALPHA_BITS);
     glfwWindowHint(GLFW_DEPTH_BITS, PGL.REQUESTED_DEPTH_BITS);
@@ -1173,7 +1244,7 @@ public class PSurfaceLWJGL implements PSurface {
     // TODO: Move OpenGL loop to another thread?
     // Adds a lot of complexity, but does not block event queue
 
-    glfwMakeContextCurrent(window);
+    // glfwMakeContextCurrent(window); // commented out for BGFX
 
     // GL.createCapabilities(); // commented out for BGFX
     pgl.setThread(Thread.currentThread());

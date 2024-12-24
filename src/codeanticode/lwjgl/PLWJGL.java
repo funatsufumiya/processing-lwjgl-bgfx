@@ -327,9 +327,9 @@ public class PLWJGL extends PGL {
 
   // Initialization, finalization
 
-
   public PLWJGL(PGraphicsOpenGL pg) {
     super(pg);
+
     glu = new PGLU();
   }
 
