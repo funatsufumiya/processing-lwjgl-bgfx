@@ -55,4 +55,37 @@ public class PGraphicsLWJGL extends PGraphicsOpenGL {
   public void endDraw() {
     super.endDraw();
   }
+
+  @Override
+  protected void getGLParameters() {
+    // Currently, just do nothing for BGFX
+    // but set basical parameters
+    // TODO: implement this method for BGFX
+
+    OPENGL_VENDOR = "BGFX";
+    OPENGL_RENDERER = "BGFX";
+    OPENGL_VERSION = "3.3";
+    OPENGL_EXTENSIONS = "";
+    GLSL_VERSION = "1.50";
+    
+    npotTexSupported = true;
+    autoMipmapGenSupported = true;
+    fboMultisampleSupported = true;
+    packedDepthStencilSupported = true;
+    anisoSamplingSupported = true;
+    readBufferSupported = true;
+    drawBufferSupported = true;
+    blendEqSupported = true;
+
+    depthBits = 24;
+    stencilBits = 8;
+
+    maxTextureSize = 4096;
+    maxSamples = 4;
+    if (anisoSamplingSupported) {
+      maxAnisoAmount = 16;
+    }
+
+    glParamsRead = true;
+  }
 }
