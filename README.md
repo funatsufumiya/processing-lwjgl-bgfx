@@ -1,4 +1,4 @@
-## Processing LWJGL BGFX Fork
+## Processing LWJGL Library BGFX Fork
 
 This is based on [processing-lwjgl](https://github.com/codeanticode/processing-lwjgl)
 

@@ -1,4 +1,4 @@
-Processing LWJGL Library Gradle Fork
+Processing LWJGL Library BGFX Fork
 ======
 
 Copyright 2024-2025 Fumiya Funatsu
