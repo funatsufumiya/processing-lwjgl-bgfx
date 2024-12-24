@@ -2147,7 +2147,21 @@ public class PLWJGL extends PGL {
   @Override
   protected void bindFramebufferImpl(int target, int framebuffer) {
     // glBindFramebuffer(target, framebuffer);
-    throw new NotImplementedException("bindFramebufferImpl() unimplemented for BGFX");
+
+    // https://github.com/bkaradzic/bgfx/issues/876#issuecomment-239372279
+
+    if ( target == PLWJGL.FRAMEBUFFER ) {
+      BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+    } else {
+      logWarning("bindFramebufferImpl(" + target + ", " + framebuffer + ") was called");
+      String targetName = DummyGLConstantsNames.getName(target);
+      logWarning("  target: " + targetName);
+      throw new NotImplementedException("bindFramebufferImpl() unimplemented for BGFX");
+    }
+
+    // BGFX.bgfx_set_view_frame_buffer(0, framebuffer);
+
+    // throw new NotImplementedException("bindFramebufferImpl() unimplemented for BGFX");
   }
 
   @Override

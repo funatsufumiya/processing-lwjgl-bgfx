@@ -27,12 +27,15 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.PointerBuffer;
+import org.lwjgl.bgfx.BGFX;
 import static org.lwjgl.bgfx.BGFX.BGFX_NATIVE_WINDOW_HANDLE_TYPE_WAYLAND;
 import static org.lwjgl.bgfx.BGFX.BGFX_RESET_VSYNC;
 import static org.lwjgl.bgfx.BGFX.bgfx_init;
@@ -134,7 +137,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
 import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwSwapInterval;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import org.lwjgl.glfw.GLFWCharCallback;
@@ -1233,6 +1235,29 @@ public class PSurfaceLWJGL implements PSurface {
     throw new NotImplementedException("setupDebugOpenGLCallback() unimplemented for BGFX");
   }
 
+  // protected static Logger getLogger() {
+  //   return Logger.getLogger("PSurfaceLWJGL");
+  // }
+
+  protected static void logWarning(String message) {
+    // getLogger().warning(message);
+    PGraphics.showWarning("(PSurfaceLWJGL) [Warn] " + message);
+  }
+
+  protected static void logInfo(String message) {
+    // getLogger().info(message);
+    PGraphics.showWarning("(PSurfaceLWJGL) [Info] " + message);
+  }
+
+  protected static Map<String, Boolean> warningMap = new HashMap<String, Boolean>();
+
+  public static void logWarningOnce(String onceKey, String message) {
+    if (!warningMap.containsKey(onceKey)) {
+      warningMap.put(onceKey, true);
+      logWarning(message);
+    }
+  }
+
   @Override
   public void startThread() {
 
@@ -1262,7 +1287,8 @@ public class PSurfaceLWJGL implements PSurface {
       // "(...) some swap interval extensions used by GLFW do not allow the swap
       // interval to be reset to zero once it has been set to a non-zero value."
       if (sketch.frameCount > 0 && this.swapIntervalChanged) {
-        glfwSwapInterval(this.swapInterval);
+      //   glfwSwapInterval(this.swapInterval);
+        // TODO: BGFX does not have swap interval, need to find a way?
         this.swapIntervalChanged = false;
       }
 
@@ -1303,7 +1329,9 @@ public class PSurfaceLWJGL implements PSurface {
       sketch.handleDraw();
       if (pframeCount != sketch.frameCount && !sketch.finished) {
         // Swap buffers only if drawing happened
-        glfwSwapBuffers(window);
+        // glfwSwapBuffers(window);
+        BGFX.bgfx_frame(false);
+        // BGFX.bgfx_frame(true);
       }
       // TODO: PGraphicsOpenGL.completeFinishedPixelTransfers();
     }
