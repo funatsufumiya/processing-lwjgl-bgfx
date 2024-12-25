@@ -2103,7 +2103,18 @@ public class PLWJGL extends PGL {
   @Override
   protected void bindTextureImpl(int target, int texture) {
     // glBindTexture(target, texture);
+
+    // FIXME: How to treat sampler and stage?
+
     throw new NotImplementedException("bindTextureImpl() unimplemented for BGFX");
+  }
+
+  protected void setTexture(short texture, short sampler, int stage, int flags){
+    BGFX.bgfx_set_texture(stage, sampler, texture, flags);
+  }
+
+  protected void setTexture(short texture, short sampler, int stage){
+    setTexture(texture, sampler, stage, 0);
   }
 
   ///////////////////////////////////////////////////////////
