@@ -1784,15 +1784,6 @@ public class PLWJGL extends PGL {
   protected void viewportImpl(int x, int y, int w, int h) {
     // glViewport(x, y, w, h);
 
-    // https://github.com/bkaradzic/bgfx/issues/2107
-    // use bgfx::setScissor() uint16_t / setScissor(uint16_t _x, uint16_t _y, uint16_t _width, uint16_t _height)
-
-    // logWarningOnce("viewportImpl()", "viewportImpl() currently uses bgfx_set_scissor() instead");
-    // BGFX.bgfx_set_scissor(x, y, w, h);
-
-    // logWarningOnce("viewportImpl()", "viewportImpl() currently uses bgfx_set_view_scissor(0, ...) instead");
-    // BGFX.bgfx_set_view_scissor(0, x, y, w, h);
-
     BGFX.bgfx_set_view_rect(0, x, y, w, h);
 
     // throw new NotImplementedException("viewportImpl() unimplemented for BGFX");
