@@ -41,11 +41,16 @@ public class PGraphicsLWJGL extends PGraphicsOpenGL {
     super();
   }
 
+  public boolean _getHint(int which) {
+    return super.getHint(which);
+  }
+
   @Override
   public PSurface createSurface() {  // ignore
     return surface = new PSurfaceLWJGL(this);
   }
   
+  @Override
   protected PGL createPGL(PGraphicsOpenGL pg) {
     return new PLWJGL(pg);
   }

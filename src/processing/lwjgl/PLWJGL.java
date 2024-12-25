@@ -47,7 +47,9 @@ import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_DEPTH;
 import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_STENCIL;
 import org.lwjgl.bgfx.BGFXCaps;
 import org.lwjgl.bgfx.BGFXCapsLimits;
+import org.lwjgl.bgfx.BGFXStats;
 
+import jdk.jshell.spi.ExecutionControl;
 import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
 import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
 import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_ALIASED_POINT_SIZE_RANGE;
@@ -288,8 +290,10 @@ import processing.lwjgl.tess.PGLU;
 import processing.lwjgl.tess.PGLUtessellator;
 import processing.lwjgl.tess.PGLUtessellatorCallbackAdapter;
 import processing.core.PApplet;
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.lwjgl.internal.BGFXCapsFormat;
+import processing.lwjgl.internal.BGFXTextureFormat;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
@@ -346,6 +350,10 @@ public class PLWJGL extends PGL {
 
   protected BGFXCaps getCapabilities() {
     return BGFX.bgfx_get_caps();
+  }
+
+  protected BGFXStats getStats() {
+    return BGFX.bgfx_get_stats();
   }
 
   @Override
@@ -454,9 +462,10 @@ public class PLWJGL extends PGL {
 
   @Override
   protected int getMaxTexUnits() {
-    // FIXME: maxTextureSize() is not the right method to get the number of texture units?
-    logWarningOnce("getMaxTexUnits()", "maxTextureUnits() returns the maximum texture size, not the number of texture units");
-    return getLimits().maxTextureSize();
+    // FIXME: maxTextures() returns the maximum texture size, may not the number of texture units
+    logWarningOnce("getMaxTexUnits()", "maxTextureUnits() returns maxTexures().");
+    return getLimits().maxTextures();
+    // return getLimits().maxTextureSize();
   }
 
   @Override
@@ -578,6 +587,353 @@ public class PLWJGL extends PGL {
 
   protected static FloatBuffer allocateDirectFloatBuffer(int size) {
     return BufferUtils.createFloatBuffer(size);
+  }
+
+  protected void _createDepthAndStencilBuffer(boolean multisample, int depthBits,
+                                           int stencilBits, boolean packed) {
+    // Creating depth and stencil buffers
+    if (packed && depthBits == 24 && stencilBits == 8) {
+      // packed depth+stencil buffer
+      IntBuffer depthStencilBuf =
+          multisample ? glMultiDepthStencil : glDepthStencil;
+      genRenderbuffers(1, depthStencilBuf);
+      bindRenderbuffer(RENDERBUFFER, depthStencilBuf.get(0));
+      if (multisample) {
+        renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                       DEPTH24_STENCIL8, fboWidth, fboHeight);
+      } else {
+        renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
+                            fboWidth, fboHeight);
+      }
+      framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
+                              depthStencilBuf.get(0));
+      framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
+                              depthStencilBuf.get(0));
+    } else {
+      // separate depth and stencil buffers
+      if (0 < depthBits) {
+        int depthComponent = DEPTH_COMPONENT16;
+        if (depthBits == 32) {
+          depthComponent = DEPTH_COMPONENT32;
+        } else if (depthBits == 24) {
+          depthComponent = DEPTH_COMPONENT24;
+        //} else if (depthBits == 16) {
+          //depthComponent = DEPTH_COMPONENT16;
+        }
+
+        IntBuffer depthBuf = multisample ? glMultiDepth : glDepth;
+        genRenderbuffers(1, depthBuf);
+        bindRenderbuffer(RENDERBUFFER, depthBuf.get(0));
+        if (multisample) {
+          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                         depthComponent, fboWidth, fboHeight);
+        } else {
+          renderbufferStorage(RENDERBUFFER, depthComponent,
+                              fboWidth, fboHeight);
+        }
+        framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
+                                RENDERBUFFER, depthBuf.get(0));
+      }
+
+      if (0 < stencilBits) {
+        int stencilIndex = STENCIL_INDEX1;
+        if (stencilBits == 8) {
+          stencilIndex = STENCIL_INDEX8;
+        } else if (stencilBits == 4) {
+          stencilIndex = STENCIL_INDEX4;
+        //} else if (stencilBits == 1) {
+          //stencilIndex = STENCIL_INDEX1;
+        }
+
+        IntBuffer stencilBuf = multisample ? glMultiStencil : glStencil;
+        genRenderbuffers(1, stencilBuf);
+        bindRenderbuffer(RENDERBUFFER, stencilBuf.get(0));
+        if (multisample) {
+          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                         stencilIndex, fboWidth, fboHeight);
+        } else {
+          renderbufferStorage(RENDERBUFFER, stencilIndex,
+                              fboWidth, fboHeight);
+        }
+        framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
+                                RENDERBUFFER, stencilBuf.get(0));
+      }
+    }
+  }
+
+  protected void _createFBOLayer() {
+    float scale = getPixelScale();
+
+    if (hasNpotTexSupport()) {
+      fboWidth = (int)(scale * graphics.width);
+      fboHeight = (int)(scale * graphics.height);
+    } else {
+      fboWidth = nextPowerOfTwo((int)(scale * graphics.width));
+      fboHeight = nextPowerOfTwo((int)(scale * graphics.height));
+    }
+
+    if (hasFboMultisampleSupport()) {
+      int maxs = maxSamples();
+      numSamples = PApplet.min(reqNumSamples, maxs);
+    } else {
+      numSamples = 1;
+    }
+    boolean multisample = 1 < numSamples;
+
+    boolean packed = hasPackedDepthStencilSupport();
+    int depthBits = PApplet.min(REQUESTED_DEPTH_BITS, getDepthBits());
+    int stencilBits = PApplet.min(REQUESTED_STENCIL_BITS, getStencilBits());
+
+    // genTextures(2, glColorTex);
+    createTextures(2, glColorTex, fboWidth, fboHeight);
+    for (int i = 0; i < 2; i++) {
+      bindTexture(TEXTURE_2D, glColorTex.get(i));
+      texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+      texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+      texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+      texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+      texImage2D(TEXTURE_2D, 0, RGBA, fboWidth, fboHeight, 0,
+                 RGBA, UNSIGNED_BYTE, null);
+      initTexture(TEXTURE_2D, RGBA, fboWidth, fboHeight, graphics.backgroundColor);
+    }
+    bindTexture(TEXTURE_2D, 0);
+
+    backTex = 0;
+    frontTex = 1;
+
+    genFramebuffers(1, glColorFbo);
+    bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
+    framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
+                         glColorTex.get(backTex), 0);
+
+    PGraphicsLWJGL pgl = (PGraphicsLWJGL)graphics;
+
+    if (!multisample || pgl._getHint(PConstants.ENABLE_BUFFER_READING)) {
+      // If not multisampled, this is the only depth and stencil buffer.
+      // If multisampled and depth reading enabled, these are going to
+      // hold downsampled depth and stencil buffers.
+      _createDepthAndStencilBuffer(false, depthBits, stencilBits, packed);
+    }
+
+    if (multisample) {
+      // Creating multisampled FBO
+      genFramebuffers(1, glMultiFbo);
+      bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
+
+      // color render buffer...
+      genRenderbuffers(1, glMultiColor);
+      bindRenderbuffer(RENDERBUFFER, glMultiColor.get(0));
+      renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+                                     RGBA8, fboWidth, fboHeight);
+      framebufferRenderbuffer(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                              RENDERBUFFER, glMultiColor.get(0));
+
+      // Creating multisampled depth and stencil buffers
+      _createDepthAndStencilBuffer(true, depthBits, stencilBits, packed);
+    }
+
+    int status = validateFramebuffer();
+
+    if (status == FRAMEBUFFER_INCOMPLETE_MULTISAMPLE && 1 < numSamples) {
+      System.err.println("Continuing with multisampling disabled");
+      reqNumSamples = 1;
+      destroyFBOLayer();
+      // try again
+      _createFBOLayer();
+      return;
+    }
+
+    // Clear all buffers.
+    clearDepth(1);
+    clearStencil(0);
+    int argb = graphics.backgroundColor;
+    float ba = ((argb >> 24) & 0xff) / 255.0f;
+    float br = ((argb >> 16) & 0xff) / 255.0f;
+    float bg = ((argb >> 8) & 0xff) / 255.0f;
+    float bb = ((argb) & 0xff) / 255.0f;
+    clearColor(br, bg, bb, ba);
+    clear(DEPTH_BUFFER_BIT | STENCIL_BUFFER_BIT | COLOR_BUFFER_BIT);
+
+    bindFramebufferImpl(FRAMEBUFFER, 0);
+    initFBOLayer();
+
+    fboLayerCreated = true;
+  }
+
+  // this is needed to override private createFBOLayer() in PGL
+  @Override
+  protected void beginRender() {
+    if (sketch == null) {
+      sketch = graphics.parent;
+    }
+
+    pgeomCount = geomCount;
+    geomCount = 0;
+
+    pclearColor = clearColor;
+    clearColor = false;
+
+    pclearDepth = clearDepth;
+    clearDepth = false;
+
+    pclearStencil = clearStencil;
+    clearStencil = false;
+
+    if (SINGLE_BUFFERED && sketch.frameCount == 1) {
+      restoreFirstFrame();
+    }
+
+    if (fboLayerEnabledReq) {
+      fboLayerEnabled = true;
+      fboLayerEnabledReq = false;
+    }
+
+    if (fboLayerEnabled) {
+      if (fbolayerResetReq) {
+        destroyFBOLayer();
+        fbolayerResetReq = false;
+      }
+      if (!fboLayerCreated) {
+        _createFBOLayer();
+      }
+
+      // Draw to the back texture
+      bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
+      framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+                           TEXTURE_2D, glColorTex.get(backTex), 0);
+
+      if (1 < numSamples) {
+        bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
+      }
+
+      if (sketch.frameCount == 0) {
+        // No need to draw back color buffer because we are in the first frame.
+        int argb = graphics.backgroundColor;
+        float ba = ((argb >> 24) & 0xff) / 255.0f;
+        float br = ((argb >> 16) & 0xff) / 255.0f;
+        float bg = ((argb >> 8) & 0xff) / 255.0f;
+        float bb = ((argb) & 0xff) / 255.0f;
+        clearColor(br, bg, bb, ba);
+        clear(COLOR_BUFFER_BIT);
+      } else if (!pclearColor || !sketch.isLooping()) {
+        // Render previous back texture (now is the front) as background,
+        // because no background() is being used ("incremental drawing")
+        int x = 0;
+        int y = 0;
+        if (presentMode) {
+          x = (int)presentX;
+          y = (int)presentY;
+        }
+        float scale = getPixelScale();
+        drawTexture(TEXTURE_2D, glColorTex.get(frontTex), fboWidth, fboHeight,
+                    x, y, graphics.width, graphics.height,
+                    0, 0, (int)(scale * graphics.width), (int)(scale * graphics.height),
+                    0, 0, graphics.width, graphics.height);
+      }
+    }
+  }
+
+
+  // this is needed to override private createFBOLayer() in PGL
+  @Override
+  protected void endRender(int windowColor) {
+    if (fboLayerEnabled) {
+      syncBackTexture();
+
+      // Draw the contents of the back texture to the screen framebuffer.
+      bindFramebufferImpl(FRAMEBUFFER, 0);
+
+      if (presentMode) {
+        float wa = ((windowColor >> 24) & 0xff)  / 255.0f;
+        float wr = ((windowColor >> 16) & 0xff) / 255.0f;
+        float wg = ((windowColor >> 8) & 0xff) / 255.0f;
+        float wb = (windowColor & 0xff) / 255.0f;
+        clearDepth(1);
+        clearColor(wr, wg, wb, wa);
+        clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+
+        if (showStopButton) {
+          if (closeButtonTex == null) {
+            closeButtonTex = allocateIntBuffer(1);
+            // genTextures(1, closeButtonTex);
+            createTextures(1, closeButtonTex, stopButtonWidth, stopButtonHeight);
+            bindTexture(TEXTURE_2D, closeButtonTex.get(0));
+            texParameteri(TEXTURE_2D, TEXTURE_MIN_FILTER, NEAREST);
+            texParameteri(TEXTURE_2D, TEXTURE_MAG_FILTER, NEAREST);
+            texParameteri(TEXTURE_2D, TEXTURE_WRAP_S, CLAMP_TO_EDGE);
+            texParameteri(TEXTURE_2D, TEXTURE_WRAP_T, CLAMP_TO_EDGE);
+            texImage2D(TEXTURE_2D, 0, RGBA, stopButtonWidth, stopButtonHeight, 0, RGBA, UNSIGNED_BYTE, null);
+
+            int[] color = new int[closeButtonPix.length];
+            PApplet.arrayCopy(closeButtonPix, color);
+
+
+            // Multiply the texture by the button color
+            float ba = ((stopButtonColor >> 24) & 0xFF) / 255f;
+            float br = ((stopButtonColor >> 16) & 0xFF) / 255f;
+            float bg = ((stopButtonColor >> 8) & 0xFF) / 255f;
+            float bb = (stopButtonColor & 0xFF) / 255f;
+            for (int i = 0; i < color.length; i++) {
+              int c = closeButtonPix[i];
+              int a = (int)(ba * ((c >> 24) & 0xFF));
+              int r = (int)(br * ((c >> 16) & 0xFF));
+              int g = (int)(bg * ((c >> 8) & 0xFF));
+              int b = (int)(bb * (c & 0xFF));
+              color[i] = javaToNativeARGB((a << 24) | (r << 16) | (g << 8) | b);
+            }
+            IntBuffer buf = allocateIntBuffer(color);
+            copyToTexture(TEXTURE_2D, RGBA, closeButtonTex.get(0), 0, 0, stopButtonWidth, stopButtonHeight, buf);
+            bindTexture(TEXTURE_2D, 0);
+          }
+          drawTexture(TEXTURE_2D, closeButtonTex.get(0), stopButtonWidth, stopButtonHeight,
+                      0, 0, stopButtonX + stopButtonWidth, closeButtonY + stopButtonHeight,
+                      0, stopButtonHeight, stopButtonWidth, 0,
+                      stopButtonX, closeButtonY, stopButtonX + stopButtonWidth, closeButtonY + stopButtonHeight);
+          }
+      } else {
+        clearDepth(1);
+        clearColor(0, 0, 0, 0);
+        clear(COLOR_BUFFER_BIT | DEPTH_BUFFER_BIT);
+      }
+
+      // Render current back texture to screen, without blending.
+      disable(BLEND);
+      int x = 0;
+      int y = 0;
+      if (presentMode) {
+        x = (int)presentX;
+        y = (int)presentY;
+      }
+      float scale = getPixelScale();
+      drawTexture(TEXTURE_2D, glColorTex.get(backTex),
+                  fboWidth, fboHeight,
+                  x, y, graphics.width, graphics.height,
+                  0, 0, (int)(scale * graphics.width), (int)(scale * graphics.height),
+                  0, 0, graphics.width, graphics.height);
+
+      // Swapping front and back textures.
+      int temp = frontTex;
+      frontTex = backTex;
+      backTex = temp;
+
+      if (fboLayerDisableReq) {
+        fboLayerEnabled = false;
+        fboLayerDisableReq = false;
+      }
+    } else {
+      if (SINGLE_BUFFERED && sketch.frameCount == 0) {
+        saveFirstFrame();
+      }
+
+      if (isFboAllowed()) {
+        if (!clearColor && 0 < sketch.frameCount || !sketch.isLooping()) {
+          enableFBOLayer();
+          if (SINGLE_BUFFERED) {
+            _createFBOLayer();
+          }
+        }
+      }
+    }
   }
 
 
@@ -1668,16 +2024,55 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("generateMipmap() unimplemented for BGFX");
   }
 
+  @Deprecated
   @Override
   public void genTextures(int n, IntBuffer textures) {
     // glGenTextures(textures);
-    throw new NotImplementedException("genTextures() unimplemented for BGFX");
+    // throw new NotImplementedException("genTextures() unimplemented for BGFX");
+
+    throw new RuntimeException("use createTextures() instead of genTextures()");
+  }
+
+  public void createTextures(int n, IntBuffer textures, int width, int height) {
+    for (int i = 0; i < n; i++) {
+      textures.put(i, createTexture(width, height));
+    }
+  }
+
+  /// @return the texture handle
+  protected short createTexture(int width, int height, int numLayers, boolean hasMips, BGFXTextureFormat format, long flags){
+    int formatValue = format.value();
+    return BGFX.bgfx_create_texture_2d(width, height, hasMips, numLayers, formatValue, flags, null);
+  }
+
+  /// @return the texture handle
+  protected short createTexture(int width, int height, int numLayers, boolean hasMips, BGFXTextureFormat format){
+    long flags = 0; // means BGFX_TEXTURE_NONE | BGFX_SAMPLER_NONE
+    return createTexture(width, height, numLayers, hasMips, format, flags);
+  }
+
+  /// @return the texture handle
+  protected short createTexture(int width, int height){
+    return createTexture(width, height, 1, false, BGFXTextureFormat.defaultValue());
+  }
+
+  /// @return the texture handle
+  protected short createTexture(int width, int height, int numLayers){
+    return createTexture(width, height, numLayers, false, BGFXTextureFormat.defaultValue());
+  }
+
+  protected void deleteTexture(short texture){
+    BGFX.bgfx_destroy_texture(texture);
   }
 
   @Override
   public void deleteTextures(int n, IntBuffer textures) {
     // glDeleteTextures(textures);
-    throw new NotImplementedException("deleteTextures() unimplemented for BGFX");
+    // throw new NotImplementedException("deleteTextures() unimplemented for BGFX");
+
+    for (int i = 0; i < n; i++) {
+      deleteTexture((short)textures.get(i));
+    }
   }
 
   @Override
@@ -2428,7 +2823,10 @@ public class PLWJGL extends PGL {
     // glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
     // return result;
 
-    throw new NotImplementedException("getDepthBits() unimplemented for BGFX");
+    // throw new NotImplementedException("getDepthBits() unimplemented for BGFX");
+
+    // TODO: get depth bits from BGFX
+    return 24;
   }
 
 
@@ -2442,7 +2840,10 @@ public class PLWJGL extends PGL {
     // glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
     // return result;
 
-    throw new NotImplementedException("getStencilBits() unimplemented for BGFX");
+    // throw new NotImplementedException("getStencilBits() unimplemented for BGFX");
+
+    // TODO: get stencil bits from BGFX
+    return 8;
   }
 
 

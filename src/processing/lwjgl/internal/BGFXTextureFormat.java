@@ -106,6 +106,12 @@ public enum BGFXTextureFormat {
     public int getValue() {
         return value;
     }
+    public int value() {
+        return value;
+    }
+    public static BGFXTextureFormat defaultValue() {
+        return RGBA8;
+    }
     public int getCount() {
         return values().length;
     }
