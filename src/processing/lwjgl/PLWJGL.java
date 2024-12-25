@@ -1790,8 +1790,10 @@ public class PLWJGL extends PGL {
     // logWarningOnce("viewportImpl()", "viewportImpl() currently uses bgfx_set_scissor() instead");
     // BGFX.bgfx_set_scissor(x, y, w, h);
 
-    logWarningOnce("viewportImpl()", "viewportImpl() currently uses bgfx_set_view_scissor(0, ...) instead");
-    BGFX.bgfx_set_view_scissor(0, x, y, w, h);
+    // logWarningOnce("viewportImpl()", "viewportImpl() currently uses bgfx_set_view_scissor(0, ...) instead");
+    // BGFX.bgfx_set_view_scissor(0, x, y, w, h);
+
+    BGFX.bgfx_set_view_rect(0, x, y, w, h);
 
     // throw new NotImplementedException("viewportImpl() unimplemented for BGFX");
   }
