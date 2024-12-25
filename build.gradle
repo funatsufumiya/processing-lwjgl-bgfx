@@ -65,11 +65,6 @@ tasks.register('buildExample', JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-task runExample(type: JavaExec) {
-    classpath = sourceSets.example.runtimeClasspath
-    main = 'test.PSketch'
-}
-
 task runSketch(type: JavaExec) {
     classpath = sourceSets.example.runtimeClasspath
     main = 'test.PSketch'

@@ -6,6 +6,7 @@ This is based on [processing-lwjgl](https://github.com/codeanticode/processing-l
 
 - [x] `./gradlew runHelloBGFX` works (this don't use the Processing API)
 - [x] show blank window
+- [ ] `./gradlew runBackground` works <- (DOING)
 
 NOTE: Currently, most of the PLWJGL code is commented out, and throws `NotImplementedException` when called.
 
@@ -15,7 +16,7 @@ NOTE: Currently, most of the PLWJGL code is commented out, and throws `NotImplem
 
 ```
 ./gradlew buildExample
-./gradlew runExample
+./gradlew runSketch
 ```
 
 #### Plain GLFW/BGFX Example
