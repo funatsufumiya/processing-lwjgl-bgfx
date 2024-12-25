@@ -45,6 +45,8 @@ import org.lwjgl.bgfx.BGFX;
 import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_COLOR;
 import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_DEPTH;
 import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_STENCIL;
+import org.lwjgl.bgfx.BGFXCaps;
+import org.lwjgl.bgfx.BGFXCapsLimits;
 
 import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
 import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
@@ -287,6 +289,7 @@ import processing.lwjgl.tess.PGLUtessellator;
 import processing.lwjgl.tess.PGLUtessellatorCallbackAdapter;
 import processing.core.PApplet;
 import processing.core.PGraphics;
+import processing.lwjgl.internal.BGFXCapsFormat;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
@@ -337,11 +340,21 @@ public class PLWJGL extends PGL {
     glu = new PGLU();
   }
 
+  protected BGFXCapsLimits getLimits() {
+    return getCapabilities().limits();
+  }
+
+  protected BGFXCaps getCapabilities() {
+    return BGFX.bgfx_get_caps();
+  }
+
   @Override
   protected boolean hasFBOs() {
     // return GL.getCapabilities().GL_ARB_framebuffer_object;
-    throw new NotImplementedException("hasFBOs() unimplemented for BGFX");
-    // return false;
+    // throw new NotImplementedException("hasFBOs() unimplemented for BGFX");
+
+    // FIXME: consider this should be always true for BGFX
+    return true;
   }
 
   @Override
@@ -349,38 +362,107 @@ public class PLWJGL extends PGL {
     // // It is enough to check GL_ARB_shading_language_100 because it depends on
     // // ARB_shader_objects, ARB_fragment_shader and ARB_vertex_shader.
     // return GL.getCapabilities().GL_ARB_shading_language_100;
-    throw new NotImplementedException("hasShaders() unimplemented for BGFX");
-    // return false;
+
+    // throw new NotImplementedException("hasShaders() unimplemented for BGFX");
+    
+    // FIXME: consider this should be always true for BGFX
+    return true;
   }
 
   @Override
   protected boolean hasNpotTexSupport() {
     // return GL.getCapabilities().GL_ARB_texture_non_power_of_two;
-    throw new NotImplementedException("hasNpotTexSupport() unimplemented for BGFX");
+    // throw new NotImplementedException("hasNpotTexSupport() unimplemented for BGFX");
+
+    // FIXME: consider this should be always true for BGFX
+    return true;
+  }
+
+  protected boolean textureFormatSupported(BGFXCapsFormat format) {
+    ShortBuffer formats = getCapabilities().formats();
+    while (formats.hasRemaining()) {
+      if (formats.get() == format.value) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Override
   protected boolean hasAutoMipmapGenSupport() {
     // return GL.getCapabilities().glGenerateMipmap != 0;
-    throw new NotImplementedException("hasAutoMipmapGenSupport() unimplemented for BGFX");
+    // throw new NotImplementedException("hasAutoMipmapGenSupport() unimplemented for BGFX");
+
+    return textureFormatSupported(BGFXCapsFormat.TEXTURE_MIP_AUTOGEN);
   }
 
   @Override
   protected boolean hasFboMultisampleSupport() {
     // return GL.getCapabilities().GL_ARB_framebuffer_object;
-    throw new NotImplementedException("hasFboMultisampleSupport() unimplemented for BGFX");
+    // throw new NotImplementedException("hasFboMultisampleSupport() unimplemented for BGFX");
+  
+    // FIXME: consider this should be always true for BGFX
+    return true;
   }
 
   @Override
   protected boolean hasPackedDepthStencilSupport() {
     // return GL.getCapabilities().GL_ARB_framebuffer_object;
-    throw new NotImplementedException("hasPackedDepthStencilSupport() unimplemented for BGFX");
+    // throw new NotImplementedException("hasPackedDepthStencilSupport() unimplemented for BGFX");
+
+    // FIXME: consider this should be always true for BGFX
+    return true;
   }
 
   @Override
   protected boolean hasAnisoSamplingSupport() {
     // return GL.getCapabilities().GL_ARB_texture_filter_anisotropic;
-    throw new NotImplementedException("hasAnisoSamplingSupport() unimplemented for BGFX");
+    // throw new NotImplementedException("hasAnisoSamplingSupport() unimplemented for BGFX");
+  
+    // FIXME: consider this should be always true for BGFX
+    return true;
+  }
+
+  @Override
+  protected boolean hasSynchronization() {
+    // FIXME: consider this should be always true for BGFX
+    return true;
+  }
+
+  @Override
+  protected boolean hasPBOs() {
+    // FIXME: consider this should be always true for BGFX
+    return true;
+  }
+
+  @Override
+  protected boolean hasReadBuffer() {
+    // FIXME: consider this should be always true for BGFX
+    return true;
+  }
+
+  @Override
+  protected boolean hasDrawBuffer() {
+    // FIXME: consider this should be always true for BGFX
+    return true;
+  }
+
+  @Override
+  protected int maxSamples() {
+    return getLimits().maxTextureSamplers();
+  }
+
+  @Override
+  protected int getMaxTexUnits() {
+    // FIXME: maxTextureSize() is not the right method to get the number of texture units?
+    logWarningOnce("getMaxTexUnits()", "maxTextureUnits() returns the maximum texture size, not the number of texture units");
+    return getLimits().maxTextureSize();
+  }
+
+  @Override
+  public boolean isFboAllowed() {
+    // FIXME: consider this should be always true for BGFX
+    return true;
   }
 
 
@@ -1077,6 +1159,9 @@ public class PLWJGL extends PGL {
     // } else {
     //   fillIntBuffer(data, 0, data.capacity() - 1, 0);
     // }
+
+    logWarning("getIntegerv() was called" +
+      " (" + DummyGLConstantsNames.getName(value) + " = " + value + "), but it does nothing in BGFX");
 
     throw new NotImplementedException("getIntegerv() unimplemented for BGFX");
   }
@@ -2270,6 +2355,12 @@ public class PLWJGL extends PGL {
   public void drawBuffer(int buf) {
     // glDrawBuffer(buf);
     throw new NotImplementedException("drawBuffer() unimplemented for BGFX");
+  }
+
+  @Override
+  protected int[] getGLVersion() {
+    // return super.getGLVersion();
+    throw new NotImplementedException("getGLVersion() unimplemented for BGFX");
   }
 
 
