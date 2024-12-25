@@ -560,6 +560,12 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("beginGL() unimplemented for BGFX");
   }
 
+  @Override
+  protected void endGL() {
+    super.endGL();
+    // throw new NotImplementedException("endGL() unimplemented for BGFX");
+  }
+
 
   ///////////////////////////////////////////////////////////
 
