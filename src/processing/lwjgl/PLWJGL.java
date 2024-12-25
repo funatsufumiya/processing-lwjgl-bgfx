@@ -657,42 +657,52 @@ public class PLWJGL extends PGL {
       PGLU.gluTessCallback(tess, PGLU.GLU_TESS_ERROR, gluCallback);
     }
 
+    @Override
     public void setCallback(int flag) {
       PGLU.gluTessCallback(tess, flag, gluCallback);      
     }    
     
+    @Override
     public void setWindingRule(int rule) {
       PGLU.gluTessProperty(tess, PGLU.GLU_TESS_WINDING_RULE, rule);
     }    
     
+    @Override
     public void setProperty(int property, int value) {
       PGLU.gluTessProperty(tess, property, value);      
     } 
     
+    @Override
     public void beginPolygon() {
       PGLU.gluTessBeginPolygon(tess, null);
     }
 
+    @Override
     public void beginPolygon(Object data) {
       PGLU.gluTessBeginPolygon(tess, data);      
     }    
     
+    @Override
     public void endPolygon() {
       PGLU.gluTessEndPolygon(tess);
     }
 
+    @Override
     public void beginContour() {
       PGLU.gluTessBeginContour(tess);
     }
 
+    @Override
     public void endContour() {
       PGLU.gluTessEndContour(tess);
     }
 
+    @Override
     public void addVertex(double[] v) {
       PGLU.gluTessVertex(tess, v, 0, v);
     }
 
+    @Override
     public void addVertex(double[] v, int n, Object data) {
       PGLU.gluTessVertex(tess, v, n, data);      
     }    
@@ -766,14 +776,17 @@ public class PLWJGL extends PGL {
       iter = shp.getPathIterator(null);
     }
 
+    @Override
     public boolean isDone() {
       return iter.isDone();
     }
 
+    @Override
     public int currentSegment(float coords[]) {
       return iter.currentSegment(coords);
     }
 
+    @Override
     public void next() {
       iter.next();
     }
