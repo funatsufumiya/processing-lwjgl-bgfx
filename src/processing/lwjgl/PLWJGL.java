@@ -457,6 +457,8 @@ public class PLWJGL extends PGL {
 
   @Override
   protected int maxSamples() {
+    // FIXME: sampler is not same as multisample
+    logWarningOnce("maxSamples()", "maxSamples() returns maxTextureSamplers() = " + getLimits().maxTextureSamplers() + ", which is not the number of multisamples.");
     return getLimits().maxTextureSamplers();
   }
 
