@@ -80,6 +80,11 @@ task runEmptySketch(type: JavaExec) {
     main = 'test.EmptySketch'
 }
 
+task runBackgroundSketch(type: JavaExec) {
+    classpath = sourceSets.example.runtimeClasspath
+    main = 'test.BackgroundSketch'
+}
+
 // just alias of buildExample
 tasks.register('buildHelloBGFX', JavaCompile) {
     source = sourceSets.example.java

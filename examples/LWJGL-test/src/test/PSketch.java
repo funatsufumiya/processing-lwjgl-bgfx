@@ -1,10 +1,7 @@
 package test;
 
-import org.lwjgl.system.Configuration;
-import org.lwjgl.system.Platform;
-
-import processing.lwjgl.PLWJGL;
 import processing.core.PApplet;
+import processing.lwjgl.PLWJGL;
 // import processing.opengl.PShader;
 
 public class PSketch extends PApplet {
@@ -48,12 +45,6 @@ public class PSketch extends PApplet {
   
   public static void main(final String[] args) {    
       System.setProperty("org.lwjgl.util.Debug","true");
-
-      // System.out.println("setting glfw_async");
-
-      if (Platform.get() == Platform.MACOSX) {
-          Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
-      }
 
       PApplet.main("test.PSketch");
   }    

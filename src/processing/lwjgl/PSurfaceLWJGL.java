@@ -159,6 +159,7 @@ import org.lwjgl.glfw.GLFWWindowPosCallback;
 import org.lwjgl.glfw.GLFWWindowRefreshCallback;
 import org.lwjgl.glfw.GLFWWindowSizeCallback;
 import org.lwjgl.system.Callback;
+import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import org.lwjgl.system.MemoryUtil;
@@ -335,6 +336,10 @@ public class PSurfaceLWJGL implements PSurface {
   @Override
   public void initFrame(PApplet sketch) {
     this.sketch = sketch;
+
+    if (Platform.get() == Platform.MACOSX) {
+        Configuration.GLFW_LIBRARY_NAME.set("glfw_async");
+    }
 
     if (!glfwInit()) {
       PGraphics.showException("Unable to initialize GLFW");
