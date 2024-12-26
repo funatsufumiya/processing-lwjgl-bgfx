@@ -7,6 +7,16 @@ This is based on [processing-lwjgl](https://github.com/codeanticode/processing-l
 - [x] `./gradlew runHelloBGFX` works (this don't use the Processing API)
 - [x] show blank window
 - [ ] (DOING) `./gradlew runBackground` works
+- [ ] Texture
+- [ ] FBO
+- [ ] Background (Clear)
+- [ ] 2D: Rect
+- [ ] 2D: Line
+- [ ] 2D: Ellipse
+- [ ] 3D: Camera (LookAt)
+- [ ] 3D: Light (Basic)
+- [ ] 3D: Box
+- [ ] 3D: Sphere
 
 NOTE: Currently, most of the PLWJGL code is commented out, and throws `NotImplementedException` when called.
 
