@@ -2020,25 +2020,41 @@ public class PLWJGL extends PGL {
   @Override
   public void texParameteri(int target, int pname, int param) {
     // glTexParameteri(target, pname, param);
-    throw new NotImplementedException("texParameteri() unimplemented for BGFX");
+
+    logWarning("texParameteri() was called" +
+      " (" + DummyGLConstantsNames.getName(pname) + " = " + pname + "), but it does nothing now in BGFX");
+
+    // throw new NotImplementedException("texParameteri() unimplemented for BGFX");
   }
 
   @Override
   public void texParameterf(int target, int pname, float param) {
     // glTexParameterf(target, pname, param);
-    throw new NotImplementedException("texParameterf() unimplemented for BGFX");
+
+    logWarning("texParameterf() was called" +
+      " (" + DummyGLConstantsNames.getName(pname) + " = " + pname + "), but it does nothing now in BGFX");
+
+    // throw new NotImplementedException("texParameterf() unimplemented for BGFX");
   }
 
   @Override
   public void texParameteriv(int target, int pname, IntBuffer params) {
     // glTexParameteriv(target, pname, params);
-    throw new NotImplementedException("texParameteriv() unimplemented for BGFX");
+
+    logWarning("texParameteriv() was called" +
+      " (" + DummyGLConstantsNames.getName(pname) + " = " + pname + "), but it does nothing now in BGFX");
+
+    // throw new NotImplementedException("texParameteriv() unimplemented for BGFX");
   }
 
   @Override
   public void texParameterfv(int target, int pname, FloatBuffer params) {
     // glTexParameterfv(target, pname, params);
-    throw new NotImplementedException("texParameterfv() unimplemented for BGFX");
+
+    logWarning("texParameterfv() was called" +
+      " (" + DummyGLConstantsNames.getName(pname) + " = " + pname + "), but it does nothing now in BGFX");
+
+    // throw new NotImplementedException("texParameterfv() unimplemented for BGFX");
   }
 
   @Override
