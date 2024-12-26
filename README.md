@@ -10,6 +10,8 @@ This is based on [processing-lwjgl](https://github.com/codeanticode/processing-l
 - [ ] Texture
 - [ ] FBO
 - [ ] Background (Clear)
+- [ ] Image
+- [ ] Shader
 - [ ] 2D: Rect
 - [ ] 2D: Line
 - [ ] 2D: Ellipse
