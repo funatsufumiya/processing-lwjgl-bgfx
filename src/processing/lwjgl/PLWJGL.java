@@ -338,10 +338,18 @@ public class PLWJGL extends PGL {
 
   // Initialization, finalization
 
-  public PLWJGL(PGraphicsOpenGL pg) {
+  public boolean silent = false;
+
+  public PLWJGL(PGraphicsOpenGL pg, boolean silent) {
     super(pg);
 
+    this.silent = silent;
+
     glu = new PGLU();
+  }
+
+  public PLWJGL(PGraphicsOpenGL pg) {
+    this(pg, false);
   }
 
   protected BGFXCapsLimits getLimits() {
@@ -1602,19 +1610,31 @@ public class PLWJGL extends PGL {
   //   return Logger.getLogger("PLWJGL");
   // }
 
-  protected static void logWarning(String message) {
+  protected void logWarning(String message) {
+    if (silent) {
+      return;
+    }
+
     // getLogger().warning(message);
     PGraphics.showWarning("(PLWJGL) [Warn] " + message);
   }
 
-  protected static void logInfo(String message) {
+  protected void logInfo(String message) {
+    if (silent) {
+      return;
+    }
+
     // getLogger().info(message);
     PGraphics.showWarning("(PLWJGL) [Info] " + message);
   }
 
-  protected static Map<String, Boolean> warningMap = new HashMap();
+  protected Map<String, Boolean> warningMap = new HashMap();
 
-  public static void logWarningOnce(String onceKey, String message) {
+  public void logWarningOnce(String onceKey, String message) {
+    if (silent) {
+      return;
+    }
+
     if (!warningMap.containsKey(onceKey)) {
       warningMap.put(onceKey, true);
       logWarning(message);
