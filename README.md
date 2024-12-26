@@ -7,6 +7,10 @@ This is based on [processing-lwjgl](https://github.com/codeanticode/processing-l
 - [x] `./gradlew runHelloBGFX` works (this don't use the Processing API)
 - [x] show blank window
 - [ ] `./gradlew runBackground` works << DOING >>
+
+### TODO (and features)
+
+- [x] Window (Basic)
 - [ ] Texture
 - [ ] FBO
 - [ ] Background (Clear)
