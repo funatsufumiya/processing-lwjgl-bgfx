@@ -40,6 +40,7 @@ import static org.lwjgl.bgfx.BGFX.BGFX_NATIVE_WINDOW_HANDLE_TYPE_WAYLAND;
 import static org.lwjgl.bgfx.BGFX.BGFX_RESET_VSYNC;
 import static org.lwjgl.bgfx.BGFX.bgfx_init;
 import static org.lwjgl.bgfx.BGFX.bgfx_init_ctor;
+import static org.lwjgl.bgfx.BGFX.bgfx_shutdown;
 import org.lwjgl.bgfx.BGFXInit;
 import org.lwjgl.glfw.GLFW;
 import static org.lwjgl.glfw.GLFW.GLFW_ALPHA_BITS;
@@ -1285,30 +1286,38 @@ public class PSurfaceLWJGL implements PSurface {
 
     this.threadRunning = true;
 
-    while (this.threadRunning) {
+    try {
 
-      // Set the swap interval after the setup() to give the user a chance to
-      // disable V-Sync. As GLFW docs for glfwSwapInterval(int) mention,
-      // "(...) some swap interval extensions used by GLFW do not allow the swap
-      // interval to be reset to zero once it has been set to a non-zero value."
-      if (sketch.frameCount > 0 && this.swapIntervalChanged) {
-      //   glfwSwapInterval(this.swapInterval);
-        // TODO: BGFX does not have swap interval, need to find a way?
-        this.swapIntervalChanged = false;
+      while (this.threadRunning) {
+
+        // Set the swap interval after the setup() to give the user a chance to
+        // disable V-Sync. As GLFW docs for glfwSwapInterval(int) mention,
+        // "(...) some swap interval extensions used by GLFW do not allow the swap
+        // interval to be reset to zero once it has been set to a non-zero value."
+        if (sketch.frameCount > 0 && this.swapIntervalChanged) {
+        //   glfwSwapInterval(this.swapInterval);
+          // TODO: BGFX does not have swap interval, need to find a way?
+          this.swapIntervalChanged = false;
+        }
+
+        // Limit the framerate
+        Sync.sync(frameRate);
+
+        glfwPollEvents();
+
+        handleDraw();
       }
 
-      // Limit the framerate
-      Sync.sync(frameRate);
+    } finally {
+      PLWJGL plwjgl = (PLWJGL) pgl;
+      plwjgl.shutdown();
+      bgfx_shutdown();
 
-      glfwPollEvents();
-
-      handleDraw();
+      // Need to clean up before exiting
+      // TODO: Make sure sketch does not System.exits before this could run, e.g. during noLoop()
+      glfwDestroyWindow(window);
+      glfwTerminate();
     }
-
-    // Need to clean up before exiting
-    // TODO: Make sure sketch does not System.exits before this could run, e.g. during noLoop()
-    glfwDestroyWindow(window);
-    glfwTerminate();
 
     sketch.exitActual();
 

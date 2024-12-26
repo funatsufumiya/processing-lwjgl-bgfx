@@ -669,6 +669,12 @@ public class PLWJGL extends PGL {
     }
   }
 
+  // TODO: This not exist in original PGL
+  //       Finally would like to remove this method
+  public void shutdown() {
+    logInfo("shutting down PLWJGL");
+  }
+
   protected void _createFBOLayer() {
     float scale = getPixelScale();
 
