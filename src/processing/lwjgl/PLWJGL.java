@@ -458,14 +458,14 @@ public class PLWJGL extends PGL {
   @Override
   protected int maxSamples() {
     // FIXME: sampler is not same as multisample
-    logWarningOnce("maxSamples()", "maxSamples() returns maxTextureSamplers() = " + getLimits().maxTextureSamplers() + ", which is not the number of multisamples.");
+    logWarningOnce("FIXME: maxSamples()", "maxSamples() returns maxTextureSamplers() = " + getLimits().maxTextureSamplers() + ", which may not the number of multisamples.");
     return getLimits().maxTextureSamplers();
   }
 
   @Override
   protected int getMaxTexUnits() {
     // FIXME: maxTextures() returns the maximum texture size, may not the number of texture units
-    logWarningOnce("getMaxTexUnits()", "maxTextureUnits() returns maxTexures().");
+    logWarningOnce("FIXME: getMaxTexUnits()", "maxTextureUnits() returns maxTexures() = " + getLimits().maxTextures() + "");
     return getLimits().maxTextures();
     // return getLimits().maxTextureSize();
   }
