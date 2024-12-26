@@ -1,4 +1,4 @@
-package processing.lwjgl.internal;
+package processing.lwjgl.types;
 
 public enum BGFXTextureFlag {
     MSAA_SAMPLE(0x0000000800000000L),

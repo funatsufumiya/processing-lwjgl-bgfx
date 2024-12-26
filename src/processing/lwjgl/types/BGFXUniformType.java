@@ -1,4 +1,4 @@
-package processing.lwjgl.internal;
+package processing.lwjgl.types;
 
 public enum BGFXUniformType {
     SAMPLER(0),

@@ -1,4 +1,4 @@
-package processing.lwjgl.internal;
+package processing.lwjgl.types;
 
 public enum BGFXAttribType {
     UINT8(0),

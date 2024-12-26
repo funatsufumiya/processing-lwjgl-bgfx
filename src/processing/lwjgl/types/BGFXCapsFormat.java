@@ -1,4 +1,4 @@
-package processing.lwjgl.internal;
+package processing.lwjgl.types;
 
 public enum BGFXCapsFormat {
     TEXTURE_NONE(0x00000000L),

@@ -1,4 +1,4 @@
-package processing.lwjgl.internal;
+package processing.lwjgl.types;
 
 public enum BGFXTextureFormat {
     BC1(0), // DXT1 R5G6B5A1
