@@ -137,7 +137,6 @@ import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
 import static org.lwjgl.glfw.GLFW.glfwShowWindow;
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
 import static org.lwjgl.glfw.GLFW.glfwTerminate;
 import static org.lwjgl.glfw.GLFW.glfwWindowHint;
 import org.lwjgl.glfw.GLFWCharCallback;
@@ -1255,7 +1254,7 @@ public class PSurfaceLWJGL implements PSurface {
     PGraphics.showWarning("(PSurfaceLWJGL) [Info] " + message);
   }
 
-  protected static Map<String, Boolean> warningMap = new HashMap<String, Boolean>();
+  protected static Map<String, Boolean> warningMap = new HashMap();
 
   public static void logWarningOnce(String onceKey, String message) {
     if (!warningMap.containsKey(onceKey)) {

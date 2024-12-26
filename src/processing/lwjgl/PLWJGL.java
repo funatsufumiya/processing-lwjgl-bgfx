@@ -49,7 +49,12 @@ import org.lwjgl.bgfx.BGFXCaps;
 import org.lwjgl.bgfx.BGFXCapsLimits;
 import org.lwjgl.bgfx.BGFXStats;
 
-import jdk.jshell.spi.ExecutionControl;
+import processing.core.PApplet;
+import processing.core.PConstants;
+import processing.core.PGraphics;
+import processing.lwjgl.internal.BGFXCapsFormat;
+import processing.lwjgl.internal.BGFXTextureFormat;
+import processing.lwjgl.internal.BGFXUniformType;
 import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
 import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
 import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_ALIASED_POINT_SIZE_RANGE;
@@ -289,11 +294,6 @@ import processing.lwjgl.internal.DummyGLConstantsNames;
 import processing.lwjgl.tess.PGLU;
 import processing.lwjgl.tess.PGLUtessellator;
 import processing.lwjgl.tess.PGLUtessellatorCallbackAdapter;
-import processing.core.PApplet;
-import processing.core.PConstants;
-import processing.core.PGraphics;
-import processing.lwjgl.internal.BGFXCapsFormat;
-import processing.lwjgl.internal.BGFXTextureFormat;
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
@@ -669,10 +669,26 @@ public class PLWJGL extends PGL {
     }
   }
 
+  protected void destroyAllTemporalSamplers() {
+    if (textureTemporalSamplerMap.size() == 0) {
+      return;
+    }
+
+    logInfo("destroying all temporal samplers");
+
+    for (Map.Entry<Short, Short> entry : textureTemporalSamplerMap.entrySet()) {
+      // short tex = entry.getKey();
+      short sampler = entry.getValue();
+      BGFX.bgfx_destroy_uniform(sampler);
+    }
+  }
+
   // TODO: This not exist in original PGL
   //       Finally would like to remove this method
   public void shutdown() {
     logInfo("shutting down PLWJGL");
+
+    destroyAllTemporalSamplers();
   }
 
   protected void _createFBOLayer() {
@@ -1596,7 +1612,7 @@ public class PLWJGL extends PGL {
     PGraphics.showWarning("(PLWJGL) [Info] " + message);
   }
 
-  protected static Map<String, Boolean> warningMap = new HashMap<String, Boolean>();
+  protected static Map<String, Boolean> warningMap = new HashMap();
 
   public static void logWarningOnce(String onceKey, String message) {
     if (!warningMap.containsKey(onceKey)) {
@@ -2110,17 +2126,41 @@ public class PLWJGL extends PGL {
   protected void bindTextureImpl(int target, int texture) {
     // glBindTexture(target, texture);
 
-    // FIXME: How to treat sampler and stage?
+    // // FIXME: How to treat sampler and stage?
 
-    throw new NotImplementedException("bindTextureImpl() unimplemented for BGFX");
+    setTexture((short)texture, target);
+
+    // throw new NotImplementedException("bindTextureImpl() unimplemented for BGFX");
   }
 
-  protected void setTexture(short texture, short sampler, int stage, int flags){
+  Map<Short, Short> textureTemporalSamplerMap = new HashMap();
+
+  public void setTexture(short texture, short sampler, int stage, int flags){
     BGFX.bgfx_set_texture(stage, sampler, texture, flags);
   }
 
-  protected void setTexture(short texture, short sampler, int stage){
+  public void setTexture(short texture, short sampler, int stage){
     setTexture(texture, sampler, stage, 0);
+  }
+
+  public void setTexture(short texture, int stage, int flags){
+    logWarning("setTexture() called without sampler, creating a temporal one");
+    String temporalSamplerName = "temporalSampler" + texture;
+    short sampler = BGFX.bgfx_create_uniform(temporalSamplerName, BGFXUniformType.SAMPLER.value, 0);
+    textureTemporalSamplerMap.put(texture, sampler);
+    BGFX.bgfx_set_texture(stage, sampler, texture, flags);
+  }
+
+  public void setTexture(short texture, int stage){
+    setTexture(texture, stage, 0);
+  }
+
+  public void createUniform(String name, BGFXUniformType type, int num){
+    BGFX.bgfx_create_uniform(name, type.value, num);
+  }
+
+  public void createUniform(String name, int type, int num){
+    BGFX.bgfx_create_uniform(name, type, num);
   }
 
   ///////////////////////////////////////////////////////////

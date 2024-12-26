@@ -1,8 +1,6 @@
 package processing.lwjgl.internal;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DummyGLConstantsNames {
@@ -14,8 +12,8 @@ public class DummyGLConstantsNames {
     protected static DummyGLConstantsNames getSingleton() {
         return _singleton;
     }
-    protected Map<Integer, String> names = new HashMap<Integer, String>();
-    // protected Map<Integer, List<String>> names = new HashMap<Integer, List<String>>();
+    protected Map<Integer, String> names = new HashMap();
+    // protected Map<Integer, List<String>> names = new HashMap();
     protected void addName(int val, String name){
         if (!names.containsKey(val)){
             // names.put(val, new ArrayList<String>());
