@@ -18,8 +18,7 @@ public enum BGFXAttrib {
     TEXCOORD4(14),
     TEXCOORD5(15),
     TEXCOORD6(16),
-    TEXCOORD7(17),
-    COUNT(18)
+    TEXCOORD7(17)
     ;
     public final int value;
     private BGFXAttrib(int value) {
