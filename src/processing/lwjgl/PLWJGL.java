@@ -2032,8 +2032,10 @@ public class PLWJGL extends PGL {
 
     short textureHandle = currentTexture.orElseThrow();
 
+    // NOTE: here comes java.nio.DirectIntBufferU
     BGFXMemory memory = bufferToMemory((IntBuffer)data);
 
+    // FIXME: should pass level as layer?
     // void bgfx::updateTexture2D(TextureHandle _handle, uint16_t _layer, uint8_t _mip, uint16_t _x, uint16_t _y, uint16_t _width, uint16_t _height, const Memory *_mem, uint16_t _pitch = UINT16_MAX)
     final int pitch = 0xFFFF; // UINT16_MAX
     BGFX.bgfx_update_texture_2d(textureHandle, 0, 0, 0, 0, width, height, memory, pitch);
@@ -2052,7 +2054,27 @@ public class PLWJGL extends PGL {
     // // TODO: needs change to IntBuffer
     // glTexSubImage2D(target, level, xOffset, yOffset, width, height, format, type, (IntBuffer)data);
 
-    throw new NotImplementedException("texSubImage2D() unimplemented for BGFX");
+    if (currentTexture.isEmpty()) {
+      throw new RuntimeException("No texture bound to call texSubImage2D()");
+    }
+
+    logWarningOnce("texSubImage2D()", "bgfx_update_texture_2d() won't update format and internalFormat. API needs to be updated for BGFX.");
+
+    if (data == null) {
+      logWarningOnce("texSubImage2D()", "bgfx_update_texture_2d() with null data does nothing.");
+      return;
+    }
+
+    short textureHandle = currentTexture.orElseThrow();
+
+    // NOTE: here comes java.nio.DirectIntBufferU
+    BGFXMemory memory = bufferToMemory((IntBuffer)data);
+    final int pitch = 0xFFFF; // UINT16_MAX
+
+    // FIXME: should pass level as layer?
+    BGFX.bgfx_update_texture_2d(textureHandle, 0, 0, xOffset, yOffset, width, height, memory, pitch);
+
+    // throw new NotImplementedException("texSubImage2D() unimplemented for BGFX");
   }
 
   @Override
