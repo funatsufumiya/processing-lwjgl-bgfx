@@ -38,6 +38,7 @@ import java.nio.IntBuffer;
 import java.nio.ShortBuffer;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.BufferUtils;
@@ -47,6 +48,7 @@ import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_DEPTH;
 import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_STENCIL;
 import org.lwjgl.bgfx.BGFXCaps;
 import org.lwjgl.bgfx.BGFXCapsLimits;
+import org.lwjgl.bgfx.BGFXMemory;
 import org.lwjgl.bgfx.BGFXStats;
 
 import processing.core.PApplet;
@@ -1995,12 +1997,48 @@ public class PLWJGL extends PGL {
 
   // Texturing
 
+  protected BGFXMemory bufferToMemory(ByteBuffer buffer) {
+    if (buffer == null) {
+      return null;
+    }
+    return new BGFXMemory(buffer);
+  }
+
+  protected BGFXMemory bufferToMemory(IntBuffer buffer) {
+    if (buffer == null) {
+      return null;
+    }
+    ByteBuffer byteBuffer = ByteBuffer.allocate(buffer.capacity() * 4);
+    byteBuffer.asIntBuffer().put((IntBuffer) buffer);
+
+    return new BGFXMemory(byteBuffer);
+  }
+
   @Override
   public void texImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, Buffer data) {
     // // TODO: needs change to IntBuffer
     // glTexImage2D(target, level, internalFormat, width, height, border, format, type, (IntBuffer)data);
 
-    throw new NotImplementedException("texImage2D() unimplemented for BGFX");
+    if (currentTexture.isEmpty()) {
+      throw new RuntimeException("No texture bound to call texImage2D()");
+    }
+
+    logWarningOnce("texImage2D()", "bgfx_update_texture_2d() won't update format and internalFormat. API needs to be updated for BGFX.");
+
+    if (data == null) {
+      logWarningOnce("texImage2D()", "bgfx_update_texture_2d() with null data does nothing.");
+      return;
+    }
+
+    short textureHandle = currentTexture.orElseThrow();
+
+    BGFXMemory memory = bufferToMemory((IntBuffer)data);
+
+    // void bgfx::updateTexture2D(TextureHandle _handle, uint16_t _layer, uint8_t _mip, uint16_t _x, uint16_t _y, uint16_t _width, uint16_t _height, const Memory *_mem, uint16_t _pitch = UINT16_MAX)
+    final int pitch = 0xFFFF; // UINT16_MAX
+    BGFX.bgfx_update_texture_2d(textureHandle, 0, 0, 0, 0, width, height, memory, pitch);
+
+    // throw new NotImplementedException("texImage2D() unimplemented for BGFX");
   }
 
   @Override
@@ -2158,11 +2196,15 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("activeTextureImpl() unimplemented for BGFX");
   }
 
+  protected Optional<Short> currentTexture = Optional.empty();
+
   @Override
   protected void bindTextureImpl(int target, int texture) {
     // glBindTexture(target, texture);
 
     // // FIXME: How to treat sampler and stage?
+
+    currentTexture = Optional.of((short)texture);
 
     setTexture((short)texture, target);
 
