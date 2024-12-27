@@ -1997,21 +1997,23 @@ public class PLWJGL extends PGL {
 
   // Texturing
 
-  protected BGFXMemory bufferToMemory(ByteBuffer buffer) {
-    if (buffer == null) {
-      return null;
-    }
-    return new BGFXMemory(buffer);
-  }
+  // protected BGFXMemory bufferToMemory(ByteBuffer buffer) {
+  //   if (buffer == null) {
+  //     return null;
+  //   }
+  //   return new BGFXMemory(buffer);
+  // }
 
   protected BGFXMemory bufferToMemory(IntBuffer buffer) {
     if (buffer == null) {
       return null;
     }
-    ByteBuffer byteBuffer = ByteBuffer.allocate(buffer.capacity() * 4);
-    byteBuffer.asIntBuffer().put((IntBuffer) buffer);
+    // ByteBuffer byteBuffer = ByteBuffer.allocate(buffer.capacity() * 4);
+    // byteBuffer.asIntBuffer().put((IntBuffer) buffer);
 
-    return new BGFXMemory(byteBuffer);
+    // return new BGFXMemory(byteBuffer);
+
+    return BGFX.bgfx_make_ref(buffer);
   }
 
   @Override
