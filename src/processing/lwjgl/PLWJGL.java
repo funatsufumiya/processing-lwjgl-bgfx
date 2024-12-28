@@ -2830,11 +2830,13 @@ public class PLWJGL extends PGL {
       BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
       // currentSrcFramebuffer = Optional.of((short)framebuffer);
     } else if ( target == PLWJGL.DRAW_FRAMEBUFFER ) {
-      BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
-      // currentDstFramebuffer = Optional.of((short)framebuffer);
+      logWarningOnce("bindFramebufferImpl()", "bindFramebufferImpl() for DRAW_FRAMEBUFFER is now temporal implementation for BGFX");
+      // BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+      currentDstFramebuffer = Optional.of((short)framebuffer);
     } else if ( target == PLWJGL.READ_FRAMEBUFFER ) {
-      BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
-      // currentSrcFramebuffer = Optional.of((short)framebuffer);
+      logWarningOnce("bindFramebufferImpl()", "bindFramebufferImpl() for READ_FRAMEBUFFER is now temporal implementation for BGFX");
+      // BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+      currentSrcFramebuffer = Optional.of((short)framebuffer);
     } else {
       // logWarning("bindFramebufferImpl(" + target + ", " + framebuffer + ") was called");
       String targetName = DummyGLConstantsNames.getName(target);
