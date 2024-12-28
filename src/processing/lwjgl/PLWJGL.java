@@ -1631,9 +1631,29 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("getString() unimplemented for BGFX");
   }
 
+  protected boolean is_verbose = true;
+
   // protected static Logger getLogger() {
   //   return Logger.getLogger("PLWJGL");
   // }
+
+  protected void logVerbose(String message) {
+    if (is_verbose) {
+      // getLogger().fine(message);
+      PGraphics.showWarning("(PLWJGL) [Verbose] " + message);
+    }
+  }
+
+  protected Map<String, Boolean> verboseOnceLogMap = new HashMap();
+
+  public void logVerboseOnce(String onceKey, String message) {
+    if (is_verbose) {
+      if (!verboseOnceLogMap.containsKey(onceKey)) {
+        verboseOnceLogMap.put(onceKey, true);
+        logVerbose(message);
+      }
+    }
+  }
 
   protected void logWarning(String message) {
     if (silent) {
@@ -2987,8 +3007,8 @@ public class PLWJGL extends PGL {
   
     logWarningOnce("blitFramebuffer()", "blitFramebuffer() is now temporal implementation for BGFX");
 
-    short dst = currentDstFramebuffer.orElseThrow(() -> new RuntimeException("No current framebuffer"));
-    short src = currentSrcFramebuffer.orElseThrow(() -> new RuntimeException("No current framebuffer"));
+    short dst = currentDstFramebuffer.orElseThrow(() -> new RuntimeException("No current dst framebuffer"));
+    short src = currentSrcFramebuffer.orElseThrow(() -> new RuntimeException("No current src framebuffer"));
 
     // void bgfx::blit(ViewId _id, TextureHandle _dst, uint16_t _dstX, uint16_t _dstY, TextureHandle _src, uint16_t _srcX = 0, uint16_t _srcY = 0, uint16_t _width = UINT16_MAX, uint16_t _height = UINT16_MAX)
     /**
@@ -3016,6 +3036,8 @@ public class PLWJGL extends PGL {
     // public static void bgfx_blit(@NativeType("bgfx_view_id_t") int _id, @NativeType("bgfx_texture_handle_t") short _dst, @NativeType("uint8_t") int _dstMip, @NativeType("uint16_t") int _dstX, @NativeType("uint16_t") int _dstY, @NativeType("uint16_t") int _dstZ, @NativeType("bgfx_texture_handle_t") short _src, @NativeType("uint8_t") int _srcMip, @NativeType("uint16_t") int _srcX, @NativeType("uint16_t") int _srcY, @NativeType("uint16_t") int _srcZ, @NativeType("uint16_t") int _width, @NativeType("uint16_t") int _height, @NativeType("uint16_t") int _depth) {
     //     nbgfx_blit((short)_id, _dst, (byte)_dstMip, (short)_dstX, (short)_dstY, (short)_dstZ, _src, (byte)_srcMip, (short)_srcX, (short)_srcY, (short)_srcZ, (short)_width, (short)_height, (short)_depth);
     // }
+
+    logVerbose("BGFX.bgfx_blit(id = 0, dst = " + dst + ", dstX = " + dstX0 + ", dstY = " + dstY0 + ", src = " + src + ", srcX = " + srcX0 + ", srcY = " + srcY0 + ", width = " + (srcX1 - srcX0) + ", height = " + (srcY1 - srcY0) + ")");
     BGFX.bgfx_blit(0, dst, 0, dstX0, dstY0, 0, src, 0, srcX0, srcY0, 0, srcX1 - srcX0, srcY1 - srcY0, 0);
   }
 
