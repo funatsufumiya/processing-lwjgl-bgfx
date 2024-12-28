@@ -27,6 +27,7 @@ package processing.lwjgl;
 import java.util.HashMap;
 import java.util.Map;
 
+import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PSurface;
 import processing.opengl.PGL;
@@ -42,6 +43,10 @@ public class PGraphicsLWJGL extends PGraphicsOpenGL {
   }
 
   public boolean _getHint(int which) {
+    if (which == PConstants.ENABLE_BUFFER_READING) {
+      // WORKAROUND: Currently disable buffer reading for BGFX
+      return false;
+    }
     return super.getHint(which);
   }
 

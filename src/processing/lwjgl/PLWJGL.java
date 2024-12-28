@@ -52,7 +52,6 @@ import org.lwjgl.bgfx.BGFXMemory;
 import org.lwjgl.bgfx.BGFXStats;
 
 import processing.core.PApplet;
-import processing.core.PConstants;
 import processing.core.PGraphics;
 import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
 import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
@@ -616,74 +615,80 @@ public class PLWJGL extends PGL {
 
   protected void _createDepthAndStencilBuffer(boolean multisample, int depthBits,
                                            int stencilBits, boolean packed) {
-    // Creating depth and stencil buffers
-    if (packed && depthBits == 24 && stencilBits == 8) {
-      // packed depth+stencil buffer
-      IntBuffer depthStencilBuf =
-          multisample ? glMultiDepthStencil : glDepthStencil;
-      genRenderbuffers(1, depthStencilBuf);
-      bindRenderbuffer(RENDERBUFFER, depthStencilBuf.get(0));
-      if (multisample) {
-        renderbufferStorageMultisample(RENDERBUFFER, numSamples,
-                                       DEPTH24_STENCIL8, fboWidth, fboHeight);
-      } else {
-        renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
-                            fboWidth, fboHeight);
-      }
-      framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
-                              depthStencilBuf.get(0));
-      framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
-                              depthStencilBuf.get(0));
-    } else {
-      // separate depth and stencil buffers
-      if (0 < depthBits) {
-        int depthComponent = DEPTH_COMPONENT16;
-        if (depthBits == 32) {
-          depthComponent = DEPTH_COMPONENT32;
-        } else if (depthBits == 24) {
-          depthComponent = DEPTH_COMPONENT24;
-        //} else if (depthBits == 16) {
-          //depthComponent = DEPTH_COMPONENT16;
-        }
 
-        IntBuffer depthBuf = multisample ? glMultiDepth : glDepth;
-        genRenderbuffers(1, depthBuf);
-        bindRenderbuffer(RENDERBUFFER, depthBuf.get(0));
-        if (multisample) {
-          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
-                                         depthComponent, fboWidth, fboHeight);
-        } else {
-          renderbufferStorage(RENDERBUFFER, depthComponent,
-                              fboWidth, fboHeight);
-        }
-        framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
-                                RENDERBUFFER, depthBuf.get(0));
-      }
+    // WORKAROUND: Currently does nothing about depth and stencil buffers for BGFX
+    throw new NotImplementedException("_createDepthAndStencilBuffer() unimplemented for BGFX");
+    
+    // // original code below:
 
-      if (0 < stencilBits) {
-        int stencilIndex = STENCIL_INDEX1;
-        if (stencilBits == 8) {
-          stencilIndex = STENCIL_INDEX8;
-        } else if (stencilBits == 4) {
-          stencilIndex = STENCIL_INDEX4;
-        //} else if (stencilBits == 1) {
-          //stencilIndex = STENCIL_INDEX1;
-        }
+    // // Creating depth and stencil buffers
+    // if (packed && depthBits == 24 && stencilBits == 8) {
+    //   // packed depth+stencil buffer
+    //   IntBuffer depthStencilBuf =
+    //       multisample ? glMultiDepthStencil : glDepthStencil;
+    //   genRenderbuffers(1, depthStencilBuf);
+    //   bindRenderbuffer(RENDERBUFFER, depthStencilBuf.get(0));
+    //   if (multisample) {
+    //     renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+    //                                    DEPTH24_STENCIL8, fboWidth, fboHeight);
+    //   } else {
+    //     renderbufferStorage(RENDERBUFFER, DEPTH24_STENCIL8,
+    //                         fboWidth, fboHeight);
+    //   }
+    //   framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT, RENDERBUFFER,
+    //                           depthStencilBuf.get(0));
+    //   framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT, RENDERBUFFER,
+    //                           depthStencilBuf.get(0));
+    // } else {
+    //   // separate depth and stencil buffers
+    //   if (0 < depthBits) {
+    //     int depthComponent = DEPTH_COMPONENT16;
+    //     if (depthBits == 32) {
+    //       depthComponent = DEPTH_COMPONENT32;
+    //     } else if (depthBits == 24) {
+    //       depthComponent = DEPTH_COMPONENT24;
+    //     //} else if (depthBits == 16) {
+    //       //depthComponent = DEPTH_COMPONENT16;
+    //     }
 
-        IntBuffer stencilBuf = multisample ? glMultiStencil : glStencil;
-        genRenderbuffers(1, stencilBuf);
-        bindRenderbuffer(RENDERBUFFER, stencilBuf.get(0));
-        if (multisample) {
-          renderbufferStorageMultisample(RENDERBUFFER, numSamples,
-                                         stencilIndex, fboWidth, fboHeight);
-        } else {
-          renderbufferStorage(RENDERBUFFER, stencilIndex,
-                              fboWidth, fboHeight);
-        }
-        framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
-                                RENDERBUFFER, stencilBuf.get(0));
-      }
-    }
+    //     IntBuffer depthBuf = multisample ? glMultiDepth : glDepth;
+    //     genRenderbuffers(1, depthBuf);
+    //     bindRenderbuffer(RENDERBUFFER, depthBuf.get(0));
+    //     if (multisample) {
+    //       renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+    //                                      depthComponent, fboWidth, fboHeight);
+    //     } else {
+    //       renderbufferStorage(RENDERBUFFER, depthComponent,
+    //                           fboWidth, fboHeight);
+    //     }
+    //     framebufferRenderbuffer(FRAMEBUFFER, DEPTH_ATTACHMENT,
+    //                             RENDERBUFFER, depthBuf.get(0));
+    //   }
+
+    //   if (0 < stencilBits) {
+    //     int stencilIndex = STENCIL_INDEX1;
+    //     if (stencilBits == 8) {
+    //       stencilIndex = STENCIL_INDEX8;
+    //     } else if (stencilBits == 4) {
+    //       stencilIndex = STENCIL_INDEX4;
+    //     //} else if (stencilBits == 1) {
+    //       //stencilIndex = STENCIL_INDEX1;
+    //     }
+
+    //     IntBuffer stencilBuf = multisample ? glMultiStencil : glStencil;
+    //     genRenderbuffers(1, stencilBuf);
+    //     bindRenderbuffer(RENDERBUFFER, stencilBuf.get(0));
+    //     if (multisample) {
+    //       renderbufferStorageMultisample(RENDERBUFFER, numSamples,
+    //                                      stencilIndex, fboWidth, fboHeight);
+    //     } else {
+    //       renderbufferStorage(RENDERBUFFER, stencilIndex,
+    //                           fboWidth, fboHeight);
+    //     }
+    //     framebufferRenderbuffer(FRAMEBUFFER, STENCIL_ATTACHMENT,
+    //                             RENDERBUFFER, stencilBuf.get(0));
+    //   }
+    // }
   }
 
   protected void destroyAllTemporalSamplers() {
@@ -756,12 +761,13 @@ public class PLWJGL extends PGL {
 
     PGraphicsLWJGL pgl = (PGraphicsLWJGL)graphics;
 
-    if (!multisample || pgl._getHint(PConstants.ENABLE_BUFFER_READING)) {
-      // If not multisampled, this is the only depth and stencil buffer.
-      // If multisampled and depth reading enabled, these are going to
-      // hold downsampled depth and stencil buffers.
-      _createDepthAndStencilBuffer(false, depthBits, stencilBits, packed);
-    }
+    // FIXME: temporally comment out for BGFX
+    // if (!multisample || pgl._getHint(PConstants.ENABLE_BUFFER_READING)) {
+    //   // If not multisampled, this is the only depth and stencil buffer.
+    //   // If multisampled and depth reading enabled, these are going to
+    //   // hold downsampled depth and stencil buffers.
+    //   _createDepthAndStencilBuffer(false, depthBits, stencilBits, packed);
+    // }
 
     if (multisample) {
       // Creating multisampled FBO
