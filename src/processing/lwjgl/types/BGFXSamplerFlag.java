@@ -1,0 +1,58 @@
+package processing.lwjgl.types;
+
+public enum BGFXSamplerFlag {
+    U_MIRROR(0x00000001L),
+    U_CLAMP(0x00000002L),
+    U_BORDER(0x00000003L),
+    V_MIRROR(0x00000004L),
+    V_CLAMP(0x00000008L),
+    V_BORDER(0x0000000cL),
+    W_MIRROR(0x00000010L),
+    W_CLAMP(0x00000020L),
+    W_BORDER(0x00000030L),
+    MIN_POINT(0x00000040L),
+    MIN_ANISOTROPIC(0x00000080L),
+    MAG_POINT(0x00000100L),
+    MAG_ANISOTROPIC(0x00000200L),
+    MIP_POINT(0x00000400L),
+    COMPARE_LESS(0x00010000L),
+    COMPARE_LEQUAL(0x00020000L),
+    COMPARE_EQUAL(0x00030000L),
+    COMPARE_GEQUAL(0x00040000L),
+    COMPARE_GREATER(0x00050000L),
+    COMPARE_NOTEQUAL(0x00060000L),
+    COMPARE_NEVER(0x00070000L),
+    COMPARE_ALWAYS(0x00080000L),
+    COMPARE_SHIFT(16),
+    COMPARE_MASK(0x000f0000L),
+    BORDER_COLOR_SHIFT(24),
+    BORDER_COLOR_MASK(0x0f000000L),
+    RESERVED_SHIFT(28),
+    NONE(0x00000000L),
+    SAMPLE_STENCIL(0x00100000L), // Sample stencil instead of depth.
+    POINT(0x00000540L), // BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT | BGFX_SAMPLER_MIP_POINT
+    UVW_MIRROR(0x00000015L), // BGFX_SAMPLER_U_MIRROR | BGFX_SAMPLER_V_MIRROR | BGFX_SAMPLER_W_MIRROR
+    UVW_CLAMP(0x0000002aL), // BGFX_SAMPLER_U_CLAMP | BGFX_SAMPLER_V_CLAMP | BGFX_SAMPLER_W_CLAMP
+    UVW_BORDER(0x0000003fL), // BGFX_SAMPLER_U_BORDER | BGFX_SAMPLER_V_BORDER | BGFX_SAMPLER_W_BORDER
+    BITS_MASK(0x000f0fffL) // BGFX_SAMPLER_U_MASK | BGFX_SAMPLER_V_MASK | BGFX_SAMPLER_W_MASK | BGFX_SAMPLER_MIN_MASK | BGFX_SAMPLER_MAG_MASK | BGFX_SAMPLER_MIP_MASK | BGFX_SAMPLER_COMPARE_MASK
+    ;
+    public final long value;
+    private BGFXSamplerFlag(long value) {
+        this.value = value;
+    }
+    public long getValue() {
+        return value;
+    }
+    public static BGFXSamplerFlag valueOf(long value) {
+        for (BGFXSamplerFlag format : values()) {
+            if (format.value == value) {
+                return format;
+            }
+        }
+        return null;
+    }
+
+    public static long borderColor(long v) {
+        return (v << BGFXSamplerFlag.BORDER_COLOR_SHIFT.value) & BGFXSamplerFlag.BORDER_COLOR_MASK.value;
+    }
+}

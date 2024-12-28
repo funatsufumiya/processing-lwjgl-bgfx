@@ -294,6 +294,7 @@ import processing.lwjgl.tess.PGLU;
 import processing.lwjgl.tess.PGLUtessellator;
 import processing.lwjgl.tess.PGLUtessellatorCallbackAdapter;
 import processing.lwjgl.types.BGFXCapsFormat;
+import processing.lwjgl.types.BGFXSamplerFlag;
 import processing.lwjgl.types.BGFXTextureFormat;
 import processing.lwjgl.types.BGFXUniformType;
 import processing.opengl.PGL;
@@ -420,7 +421,10 @@ public class PLWJGL extends PGL {
     // throw new NotImplementedException("hasFboMultisampleSupport() unimplemented for BGFX");
   
     // FIXME: consider this should be always true for BGFX
-    return true;
+    // return true;
+
+    // FIXME: consider this should be always false for BGFX
+    return false;
   }
 
   @Override
@@ -468,8 +472,11 @@ public class PLWJGL extends PGL {
   @Override
   protected int maxSamples() {
     // FIXME: sampler is not same as multisample
-    logWarningOnce("maxSamples()", "FIXME: maxSamples() returns maxTextureSamplers() = " + getLimits().maxTextureSamplers() + ", which may not the number of multisamples.");
-    return getLimits().maxTextureSamplers();
+    // logWarningOnce("maxSamples()", "FIXME: maxSamples() returns maxTextureSamplers() = " + getLimits().maxTextureSamplers() + ", which may not the number of multisamples.");
+    // return getLimits().maxTextureSamplers();
+
+    // FIXME: consider this should be always 1 for BGFX
+    return 1;
   }
 
   @Override
@@ -741,7 +748,8 @@ public class PLWJGL extends PGL {
     backTex = 0;
     frontTex = 1;
 
-    genFramebuffers(1, glColorFbo);
+    // genFramebuffers(1, glColorFbo);
+    createFramebuffers(1, glColorFbo, fboWidth, fboHeight);
     bindFramebufferImpl(FRAMEBUFFER, glColorFbo.get(0));
     framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0, TEXTURE_2D,
                          glColorTex.get(backTex), 0);
@@ -757,7 +765,8 @@ public class PLWJGL extends PGL {
 
     if (multisample) {
       // Creating multisampled FBO
-      genFramebuffers(1, glMultiFbo);
+      // genFramebuffers(1, glMultiFbo);
+      createFramebuffers(1, glMultiFbo, fboWidth, fboHeight);
       bindFramebufferImpl(FRAMEBUFFER, glMultiFbo.get(0));
 
       // color render buffer...
@@ -2829,7 +2838,34 @@ public class PLWJGL extends PGL {
   @Override
   public void genFramebuffers(int n, IntBuffer framebuffers) {
     // glGenFramebuffers(framebuffers);
-    throw new NotImplementedException("genFramebuffers() unimplemented for BGFX");
+
+    throw new RuntimeException("Use createFramebuffers() instead of genFramebuffers()");
+
+    // throw new NotImplementedException("genFramebuffers() unimplemented for BGFX");
+  }
+
+  public void createFramebuffers(int n, IntBuffer framebuffers, int width, int height) {
+    for (int i = 0; i < n; i++) {
+      framebuffers.put(i, createFramebuffer(width, height));
+    }
+  }
+
+  /// @return the framebuffer handle
+  protected short createFramebuffer(int width, int height, BGFXTextureFormat texture_format, long texture_flags){
+    return BGFX.bgfx_create_frame_buffer(width, height, texture_format.value(), texture_flags);
+  }
+
+  /// @return the framebuffer handle
+  protected short createFramebuffer(int width, int height, BGFXTextureFormat texture_format){
+    final long texture_flags = BGFXSamplerFlag.U_CLAMP.value | BGFXSamplerFlag.V_CLAMP.value;
+    return createFramebuffer(width, height, texture_format, texture_flags);
+  }
+
+  /// @return the framebuffer handle
+  protected short createFramebuffer(int width, int height){
+    final BGFXTextureFormat texture_format = BGFXTextureFormat.RGBA8;
+    final long texture_flags = BGFXSamplerFlag.U_CLAMP.value | BGFXSamplerFlag.V_CLAMP.value;
+    return BGFX.bgfx_create_frame_buffer(width, height, texture_format.value(), texture_flags);
   }
 
   @Override
@@ -2868,7 +2904,10 @@ public class PLWJGL extends PGL {
   @Override
   public void framebufferTexture2D(int target, int attachment, int texTarget, int texture, int level) {
     // glFramebufferTexture2D(target, attachment, texTarget, texture, level);
-    throw new NotImplementedException("framebufferTexture2D() unimplemented for BGFX");
+    // throw new NotImplementedException("framebufferTexture2D() unimplemented for BGFX");
+
+    logWarningOnce("framebufferTexture2D()", "framebufferTexture2D() is now temporal implementation for BGFX");
+    BGFX.bgfx_set_view_frame_buffer(0, (short)texture);
   }
 
   @Override
