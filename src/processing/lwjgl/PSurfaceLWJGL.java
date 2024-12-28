@@ -1307,6 +1307,9 @@ public class PSurfaceLWJGL implements PSurface {
         handleDraw();
       }
 
+    } catch (Exception e) {
+      e.printStackTrace();
+
     } finally {
       PLWJGL plwjgl = (PLWJGL) pgl;
       plwjgl.shutdown();
