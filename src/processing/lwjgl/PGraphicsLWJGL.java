@@ -42,6 +42,10 @@ public class PGraphicsLWJGL extends PGraphicsOpenGL {
     super();
   }
 
+  public PGL _getPrimaryPGL() {
+    return pgl;
+  }
+
   public boolean _getHint(int which) {
     if (which == PConstants.ENABLE_BUFFER_READING) {
       // WORKAROUND: Currently disable buffer reading for BGFX

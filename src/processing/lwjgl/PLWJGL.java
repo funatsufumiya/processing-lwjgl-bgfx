@@ -2828,11 +2828,18 @@ public class PLWJGL extends PGL {
 
     if ( target == PLWJGL.FRAMEBUFFER ) {
       BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+      // currentSrcFramebuffer = Optional.of((short)framebuffer);
+    } else if ( target == PLWJGL.DRAW_FRAMEBUFFER ) {
+      BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+      // currentDstFramebuffer = Optional.of((short)framebuffer);
+    } else if ( target == PLWJGL.READ_FRAMEBUFFER ) {
+      BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+      // currentSrcFramebuffer = Optional.of((short)framebuffer);
     } else {
-      logWarning("bindFramebufferImpl(" + target + ", " + framebuffer + ") was called");
+      // logWarning("bindFramebufferImpl(" + target + ", " + framebuffer + ") was called");
       String targetName = DummyGLConstantsNames.getName(target);
-      logWarning("  target: " + targetName);
-      throw new NotImplementedException("bindFramebufferImpl() unimplemented for BGFX");
+      // logWarning("  target: " + targetName);
+      throw new NotImplementedException("bindFramebufferImpl(" + targetName + " = " + target + ", " + framebuffer + ") unimplemented for BGFX");
     }
 
     // BGFX.bgfx_set_view_frame_buffer(0, framebuffer);
@@ -2968,10 +2975,46 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("getRenderbufferParameteriv() unimplemented for BGFX");
   }
 
+  Optional<Short> currentDstFramebuffer = Optional.empty();
+  Optional<Short> currentSrcFramebuffer = Optional.empty();
+
   @Override
   public void blitFramebuffer(int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, int mask, int filter) {
     // glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
-    throw new NotImplementedException("blitFramebuffer() unimplemented for BGFX");
+    // throw new NotImplementedException("blitFramebuffer() unimplemented for BGFX");
+  
+    logWarningOnce("blitFramebuffer()", "blitFramebuffer() is now temporal implementation for BGFX");
+
+    short dst = currentDstFramebuffer.orElseThrow(() -> new RuntimeException("No current framebuffer"));
+    short src = currentSrcFramebuffer.orElseThrow(() -> new RuntimeException("No current framebuffer"));
+
+    // void bgfx::blit(ViewId _id, TextureHandle _dst, uint16_t _dstX, uint16_t _dstY, TextureHandle _src, uint16_t _srcX = 0, uint16_t _srcY = 0, uint16_t _width = UINT16_MAX, uint16_t _height = UINT16_MAX)
+    /**
+     * Blits texture region between two textures.
+     * 
+     * <p>Destination texture must be created with {@link #BGFX_TEXTURE_BLIT_DST TEXTURE_BLIT_DST} flag. Availability depends on {@link #BGFX_CAPS_TEXTURE_BLIT CAPS_TEXTURE_BLIT}.</p>
+     *
+     * @param _id     view id
+     * @param _dst    destination texture handle
+     * @param _dstMip destination texture mip level
+     * @param _dstX   destination texture X position
+     * @param _dstY   destination texture Y position
+     * @param _dstZ   if texture is 2D this argument should be 0. If destination texture is cube this argument represents destination texture cube face. For 3D texture
+     *                this argument represents destination texture Z position.
+     * @param _src    source texture handle
+     * @param _srcMip source texture mip level
+     * @param _srcX   source texture X position
+     * @param _srcY   source texture Y position
+     * @param _srcZ   if texture is 2D this argument should be 0. If destination texture is cube this argument represents destination texture cube face. For 3D texture
+     *                this argument represents destination texture Z position.
+     * @param _width  width of region
+     * @param _height height of region
+     * @param _depth  if texture is 3D this argument represents depth of region, otherwise it's unused
+     */
+    // public static void bgfx_blit(@NativeType("bgfx_view_id_t") int _id, @NativeType("bgfx_texture_handle_t") short _dst, @NativeType("uint8_t") int _dstMip, @NativeType("uint16_t") int _dstX, @NativeType("uint16_t") int _dstY, @NativeType("uint16_t") int _dstZ, @NativeType("bgfx_texture_handle_t") short _src, @NativeType("uint8_t") int _srcMip, @NativeType("uint16_t") int _srcX, @NativeType("uint16_t") int _srcY, @NativeType("uint16_t") int _srcZ, @NativeType("uint16_t") int _width, @NativeType("uint16_t") int _height, @NativeType("uint16_t") int _depth) {
+    //     nbgfx_blit((short)_id, _dst, (byte)_dstMip, (short)_dstX, (short)_dstY, (short)_dstZ, _src, (byte)_srcMip, (short)_srcX, (short)_srcY, (short)_srcZ, (short)_width, (short)_height, (short)_depth);
+    // }
+    BGFX.bgfx_blit(0, dst, 0, dstX0, dstY0, 0, src, 0, srcX0, srcY0, 0, srcX1 - srcX0, srcY1 - srcY0, 0);
   }
 
   @Override
@@ -2983,13 +3026,23 @@ public class PLWJGL extends PGL {
   @Override
   public void readBuffer(int buf) {
     // glReadBuffer(buf);
-    throw new NotImplementedException("readBuffer() unimplemented for BGFX");
+    // throw new NotImplementedException("readBuffer() unimplemented for BGFX");
+
+    logWarningOnce("readBuffer()", "readBuffer() is now temporal implementation for BGFX");
+    // BGFX.bgfx_set_view_frame_buffer(0, (short)buf);
+    
+    currentSrcFramebuffer = Optional.of((short)buf);
   }
 
   @Override
   public void drawBuffer(int buf) {
     // glDrawBuffer(buf);
-    throw new NotImplementedException("drawBuffer() unimplemented for BGFX");
+    // throw new NotImplementedException("drawBuffer() unimplemented for BGFX");
+
+    logWarningOnce("drawBuffer()", "drawBuffer() is now temporal implementation for BGFX");
+    BGFX.bgfx_set_view_frame_buffer(0, (short)buf);
+
+    currentDstFramebuffer = Optional.of((short)buf);
   }
 
   @Override
@@ -3019,6 +3072,45 @@ public class PLWJGL extends PGL {
   @Override
   protected void setFrameRate(float fps) {
     sketch.getSurface().setFrameRate(fps);
+  }
+
+  @Override
+  protected PGL initTex2DShader() {
+
+    PGraphicsLWJGL _graphics = (PGraphicsLWJGL)(graphics);
+    PLWJGL ppgl = (PLWJGL)(primaryPGL ? this : _graphics._getPrimaryPGL());
+
+    // if (!ppgl.loadedTex2DShader || ppgl.tex2DShaderContext != ppgl.glContext) {
+    //   String[] preprocVertSrc = preprocessVertexSource(texVertShaderSource, getGLSLVersion(), getGLSLVersionSuffix());
+    //   String vertSource = PApplet.join(preprocVertSrc, "\n");
+    //   String[] preprocFragSrc = preprocessFragmentSource(tex2DFragShaderSource, getGLSLVersion(), getGLSLVersionSuffix());
+    //   String fragSource = PApplet.join(preprocFragSrc, "\n");
+    //   ppgl.tex2DVertShader = createShader(VERTEX_SHADER, vertSource);
+    //   ppgl.tex2DFragShader = createShader(FRAGMENT_SHADER, fragSource);
+    //   if (0 < ppgl.tex2DVertShader && 0 < ppgl.tex2DFragShader) {
+    //     ppgl.tex2DShaderProgram = createProgram(ppgl.tex2DVertShader, ppgl.tex2DFragShader);
+    //   }
+    //   if (0 < ppgl.tex2DShaderProgram) {
+    //     ppgl.tex2DVertLoc = getAttribLocation(ppgl.tex2DShaderProgram, "position");
+    //     ppgl.tex2DTCoordLoc = getAttribLocation(ppgl.tex2DShaderProgram, "texCoord");
+    //     ppgl.tex2DSamplerLoc = getUniformLocation(ppgl.tex2DShaderProgram, "texMap");
+    //   }
+    //   ppgl.loadedTex2DShader = true;
+    //   ppgl.tex2DShaderContext = ppgl.glContext;
+
+    //   genBuffers(1, intBuffer);
+    //   ppgl.tex2DGeoVBO = intBuffer.get(0);
+    //   bindBuffer(ARRAY_BUFFER, ppgl.tex2DGeoVBO);
+    //   bufferData(ARRAY_BUFFER, 16 * SIZEOF_FLOAT, null, STATIC_DRAW);
+    // }
+
+    // if (texData == null) {
+    //   texData = allocateDirectFloatBuffer(texCoords.length);
+    // }
+
+    logWarningOnce("initTex2DShader()", "initTex2DShader() currently does nothing for BGFX");
+
+    return (PGL)ppgl;
   }
 
 
@@ -3158,7 +3250,10 @@ public class PLWJGL extends PGL {
     // }
     // return 0;
 
-    throw new NotImplementedException("getGLSLVersion() unimplemented for BGFX");
+    // throw new NotImplementedException("getGLSLVersion() unimplemented for BGFX");
+
+    logWarningOnce("getGLSLVersion()", "getGLSLVersion() is now temporal implementation (just returns 330) for BGFX");
+    return 330;
   }
 
 
