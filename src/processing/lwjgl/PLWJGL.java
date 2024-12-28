@@ -1610,6 +1610,14 @@ public class PLWJGL extends PGL {
   }
 
   @Override
+  public boolean isES() {
+    // FIXME: consider BGFX should work as ES or not
+    return false;
+
+    // throw new NotImplementedException("isES() unimplemented for BGFX");
+  }
+
+  @Override
   public String getString(int key) {
     // return glGetString(key);
 
@@ -2919,7 +2927,21 @@ public class PLWJGL extends PGL {
   @Override
   public int checkFramebufferStatus(int target) {
     // return glCheckFramebufferStatus(target);
-    throw new NotImplementedException("checkFramebufferStatus() unimplemented for BGFX");
+
+    // String name = DummyGLConstantsNames.getName(target);
+    // logWarning("checkFramebufferStatus(target = " + name + " = " + target + ") was called");
+
+    if (target == GL_FRAMEBUFFER) {
+      logWarningOnce("checkFramebufferStatus()", "checkFramebufferStatus() is now temporal implementation (just returns GL_FRAMEBUFFER_COMPLETE) for BGFX");
+      return GL_FRAMEBUFFER_COMPLETE;
+    } else {
+      String name = DummyGLConstantsNames.getName(target);
+      // logWarning("checkFramebufferStatus(target = " + name + " = " + target + ") was called");
+      // throw new RuntimeException("checkFramebufferStatus() is not implemented for BGFX");
+      throw new RuntimeException("checkFramebufferStatus(target = " + name + " = " + target + ") is not implemented for BGFX");
+    }
+
+    // throw new NotImplementedException("checkFramebufferStatus() unimplemented for BGFX");
   }
 
   @Override
