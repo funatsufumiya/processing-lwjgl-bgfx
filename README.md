@@ -2,6 +2,8 @@
 
 This is based on [processing-lwjgl](https://github.com/codeanticode/processing-lwjgl)
 
+NOTE: **WORK IN PROGRESS, NOT READY FOR USE** (and not maintained)
+
 ### Current Status
 
 - [x] `./gradlew runHelloBGFX` works (this don't use the Processing API)
