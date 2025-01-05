@@ -190,7 +190,7 @@ public class PSurfaceLWJGL implements PSurface {
               .reset(BGFX_RESET_VSYNC));
 
       switch (Platform.get()) {
-          case FREEBSD:
+          // case FREEBSD:
           case LINUX:
               if (glfwGetPlatform() == GLFW_PLATFORM_WAYLAND) {
                   init.platformData()
