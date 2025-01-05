@@ -28,24 +28,32 @@ NOTE: **WORK IN PROGRESS, NOT READY FOR USE** (and may not maintained)
 
 NOTE: Currently, most of the PLWJGL code is commented out, and throws `NotImplementedException` when called.
 
+### Build
+
+```
+./gradlew buildExample
+```
+
+NOTE: This is optional when you [Run](#run) the example. (This is automatically done by the `run` task)
+
 ### Run
 
 #### Processing Example
 
 ```
-./gradlew buildExample
-./gradlew runSketch
+./gradlew runEmptySketch
 ```
 
 #### Plain GLFW/BGFX Example
 
 ```
-./gradlew buildHelloBGFX
 ./gradlew runHelloBGFX
 ```
 
 
 -----
+
+(Original README)
 
 ## Processing LWJGL library
 
