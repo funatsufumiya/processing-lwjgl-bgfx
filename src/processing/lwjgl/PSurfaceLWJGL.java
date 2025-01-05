@@ -664,6 +664,8 @@ public class PSurfaceLWJGL implements PSurface {
       }));
   }
 
+  static boolean bInitDrawBGFX_FistTime = true;
+
   protected void initDrawBGFX() {
       int viewId = 0;
 
@@ -672,6 +674,11 @@ public class PSurfaceLWJGL implements PSurface {
       int height = scaledSketch.windowToSketchUnits(frameBufferSize.h);
       // logInfo("Sketch size: " + width + " x " + height);
       BGFX.bgfx_set_view_rect(viewId, 0, 0, width, height);
+      if (bInitDrawBGFX_FistTime) {
+        // clear with gray color and 1.0f depth
+        BGFX.bgfx_set_view_clear(viewId, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0xd0d0d0ff, 1.0f, 0);
+        bInitDrawBGFX_FistTime = false;
+      }
       BGFX.bgfx_touch(viewId);
   }
 

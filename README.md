@@ -7,8 +7,8 @@ NOTE: **WORK IN PROGRESS, NOT READY FOR USE** (and may not maintained)
 ### Current Status
 
 - [x] `./gradlew runHelloBGFX` works (this don't use the Processing API)
-- [x] show blank window
-- [x] `./gradlew runBackground` works 
+- [x] show blank window (`./gradlew runEmptySketch`)
+- [x] `./gradlew runBackgroundSketch` works 
 
 ### TODO (and features)
 

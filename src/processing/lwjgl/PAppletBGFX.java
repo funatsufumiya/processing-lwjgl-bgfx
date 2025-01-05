@@ -8,15 +8,20 @@ import processing.core.PApplet;
 public class PAppletBGFX extends PApplet {
     int viewId = 0;
 
-    protected void background_hex(int rgba, float depth){
-        // System.out.println("background_hex(" + rgba + ", " + depth + ")");
-        // print rgba as hex
-        // System.out.println("background_hex(" + Integer.toHexString(rgba) + ", " + depth + ")");
-        BGFX.bgfx_set_view_clear(viewId, BGFX_CLEAR_COLOR, rgba, depth, 0);
-    }
+    // protected void background_hex(int rgba, float depth){
+    //     // System.out.println("background_hex(" + rgba + ", " + depth + ")");
+    //     // print rgba as hex
+    //     // System.out.println("background_hex(" + Integer.toHexString(rgba) + ", " + depth + ")");
+
+    //     // NOTE: currently does not clear depth here.
+    //     BGFX.bgfx_set_view_clear(viewId, BGFX_CLEAR_COLOR, rgba, depth, 0);
+    // }
 
     protected void background_hex(int rgba){
-        background_hex(rgba, 1.0f);
+        // background_hex(rgba, 1.0f);
+
+        // NOTE: currently does not clear depth here.
+        BGFX.bgfx_set_view_clear(viewId, BGFX_CLEAR_COLOR, rgba, 1.0f, 0);
     }
 
     // NOTE: currently treat v1 as r, v2 as g, v3 as b

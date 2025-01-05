@@ -1,10 +1,10 @@
 package test;
 
-import processing.core.PApplet;
+import processing.lwjgl.PAppletBGFX;
 import processing.lwjgl.PLWJGL;
 // import processing.opengl.PShader;
 
-public class EmptySketch extends PApplet {
+public class EmptySketch extends PAppletBGFX {
   
   @Override
   public void settings() {
@@ -32,6 +32,6 @@ public class EmptySketch extends PApplet {
   public static void main(final String[] args) {    
       System.setProperty("org.lwjgl.util.Debug","true");
       
-      PApplet.main("test.EmptySketch");
+      PAppletBGFX.main("test.EmptySketch");
   }    
 }
