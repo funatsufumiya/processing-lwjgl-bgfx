@@ -65,21 +65,6 @@ tasks.register('buildExample', JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-task runSketch(type: JavaExec) {
-    classpath = sourceSets.example.runtimeClasspath
-    main = 'test.PSketch'
-}
-
-task runEmptySketch(type: JavaExec) {
-    classpath = sourceSets.example.runtimeClasspath
-    main = 'test.EmptySketch'
-}
-
-task runBackgroundSketch(type: JavaExec) {
-    classpath = sourceSets.example.runtimeClasspath
-    main = 'test.BackgroundSketch'
-}
-
 // just alias of buildExample
 tasks.register('buildHelloBGFX', JavaCompile) {
     source = sourceSets.example.java
@@ -88,7 +73,38 @@ tasks.register('buildHelloBGFX', JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
-task runHelloBGFX(type: JavaExec) {
-    classpath = sourceSets.example.runtimeClasspath
-    main = 'test.HelloBGFX'
+def runExample(task, mainClassName) {
+    task.configure {
+        classpath = sourceSets.example.runtimeClasspath
+        main = 'test.' + mainClassName
+    }
+}
+
+def createExampleTasks(List<String> tasks) {
+    tasks.each { className ->
+        project.tasks.create(name: "run${className}", type: JavaExec) {
+            dependsOn(buildExample)
+            classpath = sourceSets.example.runtimeClasspath
+            main = "test.${className}"
+        }
+    }
+}
+
+createExampleTasks([
+    'HelloBGFX',
+    'PSketch',
+    'EmptySketch',
+    'BackgroundSketch'
+])
+
+// (ex:) gradle runE -Pc=PSketch
+task runE(type: JavaExec) {
+    dependsOn(buildExample)
+    if (project.hasProperty('c') && project.c) {
+        runExample(it, project.c)
+    }else if (project.hasProperty('className') && project.className) {
+        runExample(it, project.className)
+    }else{
+        runExample(it, 'PSketch')
+    }
 }
