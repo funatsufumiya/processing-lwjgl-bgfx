@@ -22,6 +22,7 @@
 
 package processing.lwjgl;
 
+import java.applet.Applet;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Shape;
@@ -40,12 +41,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.security.auth.login.AppConfigurationEntry;
+
 import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.bgfx.BGFX;
-import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_COLOR;
-import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_DEPTH;
-import static org.lwjgl.bgfx.BGFX.BGFX_CLEAR_STENCIL;
+import static org.lwjgl.bgfx.BGFX.*;
 import org.lwjgl.bgfx.BGFXCaps;
 import org.lwjgl.bgfx.BGFXCapsLimits;
 import org.lwjgl.bgfx.BGFXMemory;
@@ -53,241 +54,7 @@ import org.lwjgl.bgfx.BGFXStats;
 
 import processing.core.PApplet;
 import processing.core.PGraphics;
-import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_DIMENSIONS_EXT;
-import static processing.lwjgl.internal.DummyGLConstants.EXTFramebufferObject_GL_FRAMEBUFFER_INCOMPLETE_FORMATS_EXT;
-import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_ALIASED_POINT_SIZE_RANGE;
-import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_ALPHA8;
-import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_DEPTH_BITS;
-import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_GENERATE_MIPMAP_HINT;
-import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_LUMINANCE;
-import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_LUMINANCE_ALPHA;
-import static processing.lwjgl.internal.DummyGLConstants.GL21_GL_STENCIL_BITS;
-import static processing.lwjgl.internal.DummyGLConstants.GL32C_GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS;
-import static processing.lwjgl.internal.DummyGLConstants.GL32C_GL_TEXTURE_BINDING_RECTANGLE;
-import static processing.lwjgl.internal.DummyGLConstants.GL32C_GL_TEXTURE_RECTANGLE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ALIASED_LINE_WIDTH_RANGE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ALPHA;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ALREADY_SIGNALED;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ALWAYS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ARRAY_BUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BACK;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BLEND;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BOOL;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BOOL_VEC2;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BOOL_VEC3;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BOOL_VEC4;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BUFFER_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BUFFER_USAGE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_BYTE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_CCW;
-import static processing.lwjgl.internal.DummyGLConstants.GL_CLAMP_TO_EDGE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_COLOR_ATTACHMENT0;
-import static processing.lwjgl.internal.DummyGLConstants.GL_COLOR_ATTACHMENT1;
-import static processing.lwjgl.internal.DummyGLConstants.GL_COLOR_ATTACHMENT2;
-import static processing.lwjgl.internal.DummyGLConstants.GL_COLOR_ATTACHMENT3;
-import static processing.lwjgl.internal.DummyGLConstants.GL_COLOR_BUFFER_BIT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_COMPILE_STATUS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_COMPRESSED_TEXTURE_FORMATS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_CONDITION_SATISFIED;
-import static processing.lwjgl.internal.DummyGLConstants.GL_CONSTANT_ALPHA;
-import static processing.lwjgl.internal.DummyGLConstants.GL_CONSTANT_COLOR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_CULL_FACE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_CURRENT_VERTEX_ATTRIB;
-import static processing.lwjgl.internal.DummyGLConstants.GL_CW;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DECR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DECR_WRAP;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DELETE_STATUS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH24_STENCIL8;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_ATTACHMENT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_BUFFER_BIT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_COMPONENT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_COMPONENT16;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_COMPONENT24;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_COMPONENT32;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_STENCIL;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_TEST;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DEPTH_WRITEMASK;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DITHER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DONT_CARE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DRAW_FRAMEBUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DST_ALPHA;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DST_COLOR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_DYNAMIC_DRAW;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ELEMENT_ARRAY_BUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_EQUAL;
-import static processing.lwjgl.internal.DummyGLConstants.GL_EXTENSIONS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FALSE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FASTEST;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FLOAT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FLOAT_MAT2;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FLOAT_MAT3;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FLOAT_MAT4;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FLOAT_VEC2;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FLOAT_VEC3;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FLOAT_VEC4;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAGMENT_SHADER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_ATTACHMENT_OBJECT_TYPE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_CUBE_MAP_FACE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_ATTACHMENT_TEXTURE_LEVEL;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_COMPLETE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_UNDEFINED;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRAMEBUFFER_UNSUPPORTED;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRONT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FRONT_AND_BACK;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FUNC_ADD;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FUNC_REVERSE_SUBTRACT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_FUNC_SUBTRACT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_GEQUAL;
-import static processing.lwjgl.internal.DummyGLConstants.GL_GREATER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_HIGH_FLOAT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_HIGH_INT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_INCR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_INCR_WRAP;
-import static processing.lwjgl.internal.DummyGLConstants.GL_INFO_LOG_LENGTH;
-import static processing.lwjgl.internal.DummyGLConstants.GL_INT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_INT_VEC2;
-import static processing.lwjgl.internal.DummyGLConstants.GL_INT_VEC3;
-import static processing.lwjgl.internal.DummyGLConstants.GL_INT_VEC4;
-import static processing.lwjgl.internal.DummyGLConstants.GL_INVERT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_KEEP;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LEQUAL;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LESS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LINEAR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LINEAR_MIPMAP_LINEAR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LINEAR_MIPMAP_NEAREST;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LINES;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LINE_LOOP;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LINE_SMOOTH;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LINE_STRIP;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LINK_STATUS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LOW_FLOAT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_LOW_INT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MAX;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MAX_SAMPLES;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MAX_TEXTURE_IMAGE_UNITS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MAX_TEXTURE_MAX_ANISOTROPY;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MAX_TEXTURE_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MAX_VERTEX_ATTRIBS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MAX_VERTEX_TEXTURE_IMAGE_UNITS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MEDIUM_FLOAT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MEDIUM_INT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MIN;
-import static processing.lwjgl.internal.DummyGLConstants.GL_MULTISAMPLE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_NEAREST;
-import static processing.lwjgl.internal.DummyGLConstants.GL_NEVER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_NICEST;
-import static processing.lwjgl.internal.DummyGLConstants.GL_NOTEQUAL;
-import static processing.lwjgl.internal.DummyGLConstants.GL_NUM_COMPRESSED_TEXTURE_FORMATS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ONE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ONE_MINUS_CONSTANT_ALPHA;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ONE_MINUS_CONSTANT_COLOR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ONE_MINUS_DST_COLOR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ONE_MINUS_SRC_ALPHA;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ONE_MINUS_SRC_COLOR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_PACK_ALIGNMENT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_PIXEL_PACK_BUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_POINTS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_POLYGON_OFFSET_FILL;
-import static processing.lwjgl.internal.DummyGLConstants.GL_POLYGON_SMOOTH;
-import static processing.lwjgl.internal.DummyGLConstants.GL_READ_FRAMEBUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_READ_ONLY;
-import static processing.lwjgl.internal.DummyGLConstants.GL_READ_WRITE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_ALPHA_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_BLUE_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_DEPTH_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_GREEN_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_HEIGHT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_INTERNAL_FORMAT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_RED_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_STENCIL_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERBUFFER_WIDTH;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RENDERER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_REPEAT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_REPLACE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RGB;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RGB565;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RGB5_A1;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RGB8;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RGBA;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RGBA4;
-import static processing.lwjgl.internal.DummyGLConstants.GL_RGBA8;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SAMPLER_2D;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SAMPLER_CUBE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SAMPLES;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SAMPLE_ALPHA_TO_COVERAGE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SAMPLE_COVERAGE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SCISSOR_TEST;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SHADER_SOURCE_LENGTH;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SHADER_TYPE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SHADING_LANGUAGE_VERSION;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SHORT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SRC_ALPHA;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SRC_ALPHA_SATURATE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SRC_COLOR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STATIC_DRAW;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STENCIL_ATTACHMENT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STENCIL_BUFFER_BIT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STENCIL_INDEX;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STENCIL_INDEX1;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STENCIL_INDEX4;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STENCIL_INDEX8;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STENCIL_TEST;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STREAM_DRAW;
-import static processing.lwjgl.internal.DummyGLConstants.GL_STREAM_READ;
-import static processing.lwjgl.internal.DummyGLConstants.GL_SYNC_GPU_COMMANDS_COMPLETE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE0;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE1;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE2;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE3;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_2D;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_BINDING_2D;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_CUBE_MAP;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_CUBE_MAP_NEGATIVE_X;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_CUBE_MAP_POSITIVE_X;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_CUBE_MAP_POSITIVE_Y;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_CUBE_MAP_POSITIVE_Z;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_MAG_FILTER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_MAX_ANISOTROPY;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_MIN_FILTER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_WRAP_R;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_WRAP_S;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TEXTURE_WRAP_T;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TRIANGLES;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TRIANGLE_FAN;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TRIANGLE_STRIP;
-import static processing.lwjgl.internal.DummyGLConstants.GL_TRUE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_UNPACK_ALIGNMENT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_UNSIGNED_BYTE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_UNSIGNED_INT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_UNSIGNED_SHORT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_UNSIGNED_SHORT_4_4_4_4;
-import static processing.lwjgl.internal.DummyGLConstants.GL_UNSIGNED_SHORT_5_5_5_1;
-import static processing.lwjgl.internal.DummyGLConstants.GL_UNSIGNED_SHORT_5_6_5;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VALIDATE_STATUS;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VENDOR;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERSION;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERTEX_ATTRIB_ARRAY_BUFFER_BINDING;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERTEX_ATTRIB_ARRAY_ENABLED;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERTEX_ATTRIB_ARRAY_NORMALIZED;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERTEX_ATTRIB_ARRAY_POINTER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERTEX_ATTRIB_ARRAY_SIZE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERTEX_ATTRIB_ARRAY_STRIDE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERTEX_ATTRIB_ARRAY_TYPE;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VERTEX_SHADER;
-import static processing.lwjgl.internal.DummyGLConstants.GL_VIEWPORT;
-import static processing.lwjgl.internal.DummyGLConstants.GL_WRITE_ONLY;
-import static processing.lwjgl.internal.DummyGLConstants.GL_ZERO;
+import static processing.lwjgl.internal.DummyGLConstants.*;
 import processing.lwjgl.internal.DummyGLConstantsNames;
 import processing.lwjgl.tess.PGLU;
 import processing.lwjgl.tess.PGLUtessellator;
@@ -337,6 +104,9 @@ public class PLWJGL extends PGL {
   }
 
   ///////////////////////////////////////////////////////////
+  
+  protected short frontFbo = -1;
+  protected short backFbo = -1;
 
   // Initialization, finalization
 
@@ -709,6 +479,16 @@ public class PLWJGL extends PGL {
   //       Finally would like to remove this method
   public void shutdown() {
     logInfo("shutting down PLWJGL");
+
+    if (frontFbo != -1) {
+      BGFX.bgfx_destroy_frame_buffer(frontFbo);
+      frontFbo = -1;
+    }
+
+    if (backFbo != -1) {
+      BGFX.bgfx_destroy_frame_buffer(backFbo);
+      backFbo = -1;
+    }
 
     destroyAllTemporalSamplers();
   }
@@ -1632,6 +1412,14 @@ public class PLWJGL extends PGL {
   }
 
   protected boolean is_verbose = true;
+
+  public void setVerbose(boolean v) {
+    is_verbose = v;
+  }
+
+  public boolean isVerbose() {
+    return is_verbose;
+  }
 
   // protected static Logger getLogger() {
   //   return Logger.getLogger("PLWJGL");
@@ -2838,36 +2626,56 @@ public class PLWJGL extends PGL {
 
   ///////////////////////////////////////////////////////////
 
-  // Framebuffers Objects
+  // Framebuffers Object
+
+  protected void setViewFrameBuffer(int viewId, short framebuffer){
+    throw new NotImplementedException("setViewFrameBuffer() unimplemented for BGFX");
+    // BGFX.bgfx_set_view_frame_buffer(viewId, framebuffer);
+  }
+
+  protected void setViewFrameBuffer(short framebuffer){
+    throw new NotImplementedException("setViewFrameBuffer() unimplemented for BGFX");
+    // setViewFrameBuffer(0, framebuffer);
+  }
+
+  // @Override
+  // protected void bindFramebufferImpl(int target, int framebuffer) {
+  //   // glBindFramebuffer(target, framebuffer);
+
+  //   // https://github.com/bkaradzic/bgfx/issues/876#issuecomment-239372279
+
+  //   if ( target == PLWJGL.FRAMEBUFFER ) {
+  //     BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+  //     currentFramebuffer = Optional.of((short)framebuffer);
+  //   } else if ( target == PLWJGL.DRAW_FRAMEBUFFER ) {
+  //     logWarningOnce("bindFramebufferImpl()", "bindFramebufferImpl() for DRAW_FRAMEBUFFER is now temporal implementation for BGFX");
+  //     logVerbose("bindFramebufferImpl( DRAW_FRAMEBUFFER, " + framebuffer + ")");
+  //     // BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+  //     currentDstFramebuffer = Optional.of((short)framebuffer);
+  //   } else if ( target == PLWJGL.READ_FRAMEBUFFER ) {
+  //     logWarningOnce("bindFramebufferImpl()", "bindFramebufferImpl() for READ_FRAMEBUFFER is now temporal implementation for BGFX");
+  //     logVerbose("bindFramebufferImpl( READ_FRAMEBUFFER, " + framebuffer + ")");
+  //     // BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
+  //     currentSrcFramebuffer = Optional.of((short)framebuffer);
+  //   } else {
+  //     // logWarning("bindFramebufferImpl(" + target + ", " + framebuffer + ") was called");
+  //     String targetName = DummyGLConstantsNames.getName(target);
+  //     // logWarning("  target: " + targetName);
+  //     throw new NotImplementedException("bindFramebufferImpl(" + targetName + " = " + target + ", " + framebuffer + ") unimplemented for BGFX");
+  //   }
+  // }
+
+  // @Override
+  // @Deprecated
+  // protected void bindFramebufferImpl(int target, int framebuffer) {
+  //   throw new RuntimeException("use setViewFrameBuffer() instead of bindFramebufferImpl()");
+  // }
 
   @Override
   protected void bindFramebufferImpl(int target, int framebuffer) {
-    // glBindFramebuffer(target, framebuffer);
-
-    // https://github.com/bkaradzic/bgfx/issues/876#issuecomment-239372279
-
-    if ( target == PLWJGL.FRAMEBUFFER ) {
-      BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
-      // currentSrcFramebuffer = Optional.of((short)framebuffer);
-    } else if ( target == PLWJGL.DRAW_FRAMEBUFFER ) {
-      logWarningOnce("bindFramebufferImpl()", "bindFramebufferImpl() for DRAW_FRAMEBUFFER is now temporal implementation for BGFX");
-      // BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
-      currentDstFramebuffer = Optional.of((short)framebuffer);
-    } else if ( target == PLWJGL.READ_FRAMEBUFFER ) {
-      logWarningOnce("bindFramebufferImpl()", "bindFramebufferImpl() for READ_FRAMEBUFFER is now temporal implementation for BGFX");
-      // BGFX.bgfx_set_view_frame_buffer(0, (short)framebuffer);
-      currentSrcFramebuffer = Optional.of((short)framebuffer);
-    } else {
-      // logWarning("bindFramebufferImpl(" + target + ", " + framebuffer + ") was called");
-      String targetName = DummyGLConstantsNames.getName(target);
-      // logWarning("  target: " + targetName);
-      throw new NotImplementedException("bindFramebufferImpl(" + targetName + " = " + target + ", " + framebuffer + ") unimplemented for BGFX");
-    }
-
-    // BGFX.bgfx_set_view_frame_buffer(0, framebuffer);
-
-    // throw new NotImplementedException("bindFramebufferImpl() unimplemented for BGFX");
+      throw new NotImplementedException("bindFramebufferImpl() unimplemented for BGFX");
   }
+
 
   @Override
   public void deleteFramebuffers(int n, IntBuffer framebuffers) {
@@ -2947,10 +2755,10 @@ public class PLWJGL extends PGL {
   @Override
   public void framebufferTexture2D(int target, int attachment, int texTarget, int texture, int level) {
     // glFramebufferTexture2D(target, attachment, texTarget, texture, level);
-    // throw new NotImplementedException("framebufferTexture2D() unimplemented for BGFX");
+    throw new NotImplementedException("framebufferTexture2D() unimplemented for BGFX");
 
-    logWarningOnce("framebufferTexture2D()", "framebufferTexture2D() is now temporal implementation for BGFX");
-    BGFX.bgfx_set_view_frame_buffer(0, (short)texture);
+    // logWarningOnce("framebufferTexture2D()", "framebufferTexture2D() is now temporal implementation for BGFX");
+    // BGFX.bgfx_set_view_frame_buffer(0, (short)texture);
   }
 
   @Override
@@ -2997,6 +2805,7 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("getRenderbufferParameteriv() unimplemented for BGFX");
   }
 
+  Optional<Short> currentFramebuffer = Optional.empty();
   Optional<Short> currentDstFramebuffer = Optional.empty();
   Optional<Short> currentSrcFramebuffer = Optional.empty();
 
@@ -3047,26 +2856,60 @@ public class PLWJGL extends PGL {
     throw new NotImplementedException("renderbufferStorageMultisample() unimplemented for BGFX");
   }
 
-  @Override
-  public void readBuffer(int buf) {
-    // glReadBuffer(buf);
-    // throw new NotImplementedException("readBuffer() unimplemented for BGFX");
+  // @Override
+  // public void readBuffer(int buf) {
+  //   // glReadBuffer(buf);
+  //   // throw new NotImplementedException("readBuffer() unimplemented for BGFX");
 
-    logWarningOnce("readBuffer()", "readBuffer() is now temporal implementation for BGFX");
-    // BGFX.bgfx_set_view_frame_buffer(0, (short)buf);
+  //   if (buf != ((int)((short)buf))) {
+  //     throw new RuntimeException("buf not equals (short)buf");
+  //   }
+
+  //   logWarningOnce("readBuffer()", "readBuffer() is now temporal implementation for BGFX");
+  //   // BGFX.bgfx_set_view_frame_buffer(0, (short)buf);
+
+  //   logVerbose("readBuffer(" + buf + ")");
+  //   // logVerbose("readBuffer(" + (int)((short)buf) + ")");
     
-    currentSrcFramebuffer = Optional.of((short)buf);
+  //   currentSrcFramebuffer = Optional.of((short)buf);
+  // }
+
+  @Override
+  @Deprecated
+  public void readBuffer(int buf) {
+    throw new RuntimeException("Use setSourceFramebuffer() instead of readBuffer()");
+  }  
+
+  public void setSourceFramebuffer(short framebuffer) {
+    currentSrcFramebuffer = Optional.of(framebuffer);
   }
 
+  // @Override
+  // public void drawBuffer(int buf) {
+  //   // glDrawBuffer(buf);
+  //   // throw new NotImplementedException("drawBuffer() unimplemented for BGFX");
+
+  //   if (buf != ((int)((short)buf))) {
+  //     throw new RuntimeException("buf not equals (short)buf");
+  //   }
+
+  //   logWarningOnce("drawBuffer()", "drawBuffer() is now temporal implementation for BGFX");
+  //   BGFX.bgfx_set_view_frame_buffer(0, (short)buf);
+
+  //   logVerbose("drawBuffer(" + buf + ")");
+  //   // logVerbose("drawBuffer(" + (int)((short)buf) + ")");
+
+  //   currentDstFramebuffer = Optional.of((short)buf);
+  // }
+
   @Override
+  @Deprecated
   public void drawBuffer(int buf) {
-    // glDrawBuffer(buf);
-    // throw new NotImplementedException("drawBuffer() unimplemented for BGFX");
+    throw new RuntimeException("Use setDestinationFramebuffer() instead of drawBuffer()");
+  }
 
-    logWarningOnce("drawBuffer()", "drawBuffer() is now temporal implementation for BGFX");
-    BGFX.bgfx_set_view_frame_buffer(0, (short)buf);
-
-    currentDstFramebuffer = Optional.of((short)buf);
+  public void setDestinationFramebuffer(short framebuffer) {
+    currentDstFramebuffer = Optional.of(framebuffer);
   }
 
   @Override
@@ -3224,8 +3067,10 @@ public class PLWJGL extends PGL {
   @Override
   protected void initFBOLayer() {
     if (0 < sketch.frameCount) {
-      if (isES()) initFBOLayerES();
-      else initFBOLayerGL();
+      // if (isES()) initFBOLayerES();
+      // else initFBOLayerGL();
+
+      initFBOLayerBGFX();
     }
   }
 
@@ -3351,55 +3196,81 @@ public class PLWJGL extends PGL {
     return null;
   }
 
-  private void initFBOLayerES() {
-    IntBuffer buf = allocateDirectIntBuffer(fboWidth * fboHeight);
+  // private void initFBOLayerES() {
+  //   IntBuffer buf = allocateDirectIntBuffer(fboWidth * fboHeight);
 
-    if (hasReadBuffer()) readBuffer(BACK);
-    readPixelsImpl(0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
-    bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
-    texSubImage2D(TEXTURE_2D, 0, 0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
+  //   if (hasReadBuffer()) readBuffer(BACK);
+  //   readPixelsImpl(0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
+  //   bindTexture(TEXTURE_2D, glColorTex.get(frontTex));
+  //   texSubImage2D(TEXTURE_2D, 0, 0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
 
-    bindTexture(TEXTURE_2D, glColorTex.get(backTex));
-    texSubImage2D(TEXTURE_2D, 0, 0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
+  //   bindTexture(TEXTURE_2D, glColorTex.get(backTex));
+  //   texSubImage2D(TEXTURE_2D, 0, 0, 0, fboWidth, fboHeight, RGBA, UNSIGNED_BYTE, buf);
 
-    bindTexture(TEXTURE_2D, 0);
-    bindFramebufferImpl(FRAMEBUFFER, 0);
-  }
+  //   bindTexture(TEXTURE_2D, 0);
+  //   bindFramebufferImpl(FRAMEBUFFER, 0);
+  // }
 
-
-  private void initFBOLayerGL() {
+  private void initFBOLayerBGFX() {
     // Copy the contents of the front and back screen buffers to the textures
     // of the FBO, so they are properly initialized. Note that the front buffer
     // of the default framebuffer (the screen) contains the previous frame:
     // https://www.opengl.org/wiki/Default_Framebuffer
     // so it is copied to the front texture of the FBO layer:
-    if (pclearColor || 0 < pgeomCount || !sketch.isLooping()) {
-      if (hasReadBuffer()) readBuffer(FRONT);
-    } else {
-      // ...except when the previous frame has not been cleared and nothing was
-      // rendered while looping. In this case the back buffer, which holds the
-      // initial state of the previous frame, still contains the most up-to-date
-      // screen state.
-      readBuffer(BACK);
-    }
-    bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-    framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                         TEXTURE_2D, glColorTex.get(frontTex), 0);
-    if (hasDrawBuffer()) drawBuffer(COLOR_ATTACHMENT0);
-    blitFramebuffer(0, 0, fboWidth, fboHeight,
-                    0, 0, fboWidth, fboHeight,
-                    COLOR_BUFFER_BIT, NEAREST);
 
-    readBuffer(BACK);
-    bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
-    framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
-                         TEXTURE_2D, glColorTex.get(backTex), 0);
-    drawBuffer(COLOR_ATTACHMENT0);
-    blitFramebuffer(0, 0, fboWidth, fboHeight,
-                    0, 0, fboWidth, fboHeight,
-                    COLOR_BUFFER_BIT, NEAREST);
+    // throw new NotImplementedException("initFBOLayerBGFX() unimplemented for BGFX");
 
-    bindFramebufferImpl(FRAMEBUFFER, 0);
+    logWarningOnce("initFBOLayerBGFX()", "initFBOLayerBGFX() currently does nothing");
+
+    // short viewId = 0;
+    // short frontFbo = BGFX.bgfx_create_frame_buffer(fboWidth, fboHeight, BGFX_TEXTURE_FORMAT_RGBA8, BGFX_TEXTURE_NONE);
+    // short backFbo = BGFX.bgfx_create_frame_buffer(fboWidth, fboHeight, BGFX_TEXTURE_FORMAT_RGBA8, BGFX_TEXTURE_NONE);
+    
+    // if (pclearColor || 0 < pgeomCount || !sketch.isLooping()) {
+    //     // bgfx_request_screen_shot(BGFX_INVALID_HANDLE, "temp");
+    // }
+    
+    // BGFX.bgfx_set_view_frame_buffer(viewId, colorFbo);
+    // BGFX.bgfx_blit(viewId, 
+    //           dstTexture, 0, 0, 
+    //           srcTexture, 0, 0, 
+    //           fboWidth, fboHeight);
   }
+
+
+  // private void initFBOLayerGL() {
+  //   // Copy the contents of the front and back screen buffers to the textures
+  //   // of the FBO, so they are properly initialized. Note that the front buffer
+  //   // of the default framebuffer (the screen) contains the previous frame:
+  //   // https://www.opengl.org/wiki/Default_Framebuffer
+  //   // so it is copied to the front texture of the FBO layer:
+  //   if (pclearColor || 0 < pgeomCount || !sketch.isLooping()) {
+  //     if (hasReadBuffer()) readBuffer(FRONT);
+  //   } else {
+  //     // ...except when the previous frame has not been cleared and nothing was
+  //     // rendered while looping. In this case the back buffer, which holds the
+  //     // initial state of the previous frame, still contains the most up-to-date
+  //     // screen state.
+  //     readBuffer(BACK);
+  //   }
+  //   bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+  //   framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+  //                        TEXTURE_2D, glColorTex.get(frontTex), 0);
+  //   if (hasDrawBuffer()) drawBuffer(COLOR_ATTACHMENT0);
+  //   blitFramebuffer(0, 0, fboWidth, fboHeight,
+  //                   0, 0, fboWidth, fboHeight,
+  //                   COLOR_BUFFER_BIT, NEAREST);
+
+  //   readBuffer(BACK);
+  //   bindFramebufferImpl(DRAW_FRAMEBUFFER, glColorFbo.get(0));
+  //   framebufferTexture2D(FRAMEBUFFER, COLOR_ATTACHMENT0,
+  //                        TEXTURE_2D, glColorTex.get(backTex), 0);
+  //   drawBuffer(COLOR_ATTACHMENT0);
+  //   blitFramebuffer(0, 0, fboWidth, fboHeight,
+  //                   0, 0, fboWidth, fboHeight,
+  //                   COLOR_BUFFER_BIT, NEAREST);
+
+  //   bindFramebufferImpl(FRAMEBUFFER, 0);
+  // }
 
 }

@@ -1,10 +1,11 @@
 package test;
 
-import processing.core.PApplet;
+// import processing.core.PApplet;
+import processing.lwjgl.PAppletBGFX;
 import processing.lwjgl.PLWJGL;
 // import processing.opengl.PShader;
 
-public class BackgroundSketch extends PApplet {
+public class BackgroundSketch extends PAppletBGFX {
   
   @Override
   public void settings() {
@@ -22,6 +23,15 @@ public class BackgroundSketch extends PApplet {
  
   @Override
   public void draw() {
+    // System.out.println("draw");
+
+    // force print stack trace
+    // try {
+    //   throw new Exception();
+    // } catch (Exception e) {
+    //   e.printStackTrace();
+    // }
+
     background(255, 0, 0);
   }
 
@@ -32,6 +42,6 @@ public class BackgroundSketch extends PApplet {
   public static void main(final String[] args) {    
       System.setProperty("org.lwjgl.util.Debug","true");
 
-      PApplet.main("test.EmptySketch");
+      PAppletBGFX.main("test.BackgroundSketch");
   }    
 }

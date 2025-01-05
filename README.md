@@ -8,14 +8,14 @@ NOTE: **WORK IN PROGRESS, NOT READY FOR USE** (and not maintained)
 
 - [x] `./gradlew runHelloBGFX` works (this don't use the Processing API)
 - [x] show blank window
-- [ ] `./gradlew runBackground` works << DOING >>
+- [x] `./gradlew runBackground` works 
 
 ### TODO (and features)
 
 - [x] Window (Basic)
+- [x] Background (Clear)
 - [ ] Texture
 - [ ] FBO
-- [ ] Background (Clear)
 - [ ] Image
 - [ ] Shader
 - [ ] 2D: Rect

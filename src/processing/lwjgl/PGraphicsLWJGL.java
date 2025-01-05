@@ -64,14 +64,97 @@ public class PGraphicsLWJGL extends PGraphicsOpenGL {
     return new PLWJGL(pg);
   }
 
+  // @Override
+  // public void beginDraw() {
+  //   super.beginDraw();
+  // }
+
+  // @Override
+  // public void endDraw() {
+  //   super.endDraw();
+  // }
+
   @Override
   public void beginDraw() {
-    super.beginDraw();
+    // if (primaryGraphics) {
+    //   if (!initialized) {
+    //     initPrimary();
+    //   }
+    //   setCurrentPG(this);
+    // } else {
+    //   pgl.getGL(getPrimaryPGL());
+    //   getPrimaryPG().setCurrentPG(this);
+    // }
+
+    if (!pgl.threadIsCurrent()) {
+      // PGraphics.showWarning(GL_THREAD_NOT_CURRENT);
+      PGraphics.showWarning("You are not in the GL thread. You can't draw to this PGraphics from a different thread.");
+      return;
+    }
+
+    // This has to go after the surface initialization, otherwise offscreen
+    // surfaces will have a null gl object.
+    report("top beginDraw()");
+
+    // if (!checkGLThread()) {
+    //   return;
+    // }
+
+    if (drawing) {
+      return;
+    }
+
+    // if (!primaryGraphics && getPrimaryPG().texCache.containsTexture(this)) {
+    //   // This offscreen surface is being used as a texture earlier in draw,
+    //   // so we should update the rendering up to this point since it will be
+    //   // modified.
+    //   getPrimaryPG().flush();
+    // }
+
+    // if (!glParamsRead) {
+    //   getGLParameters();
+    // }
+
+    // setViewport();
+    // checkSettings();
+    // if (primaryGraphics) {
+    //   beginOnscreenDraw();
+    // } else {
+    //   beginOffscreenDraw();
+    // }
+
+
+    drawing = true;
+
+    report("bot beginDraw()");
   }
+
 
   @Override
   public void endDraw() {
-    super.endDraw();
+    report("top endDraw()");
+
+    if (!drawing) {
+      return;
+    }
+
+    // Flushing any remaining geometry.
+    // flush();
+
+    // if (primaryGraphics) {
+    //   endOnscreenDraw();
+    // } else {
+    //   endOffscreenDraw();
+    // }
+
+    if (primaryGraphics) {
+      setCurrentPG(null);
+    } else {
+      // getPrimaryPG().setCurrentPG();
+    }
+    drawing = false;
+
+    report("bot endDraw()");
   }
 
   @Override

@@ -36,109 +36,10 @@ import java.util.function.Consumer;
 import org.apache.commons.lang.NotImplementedException;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.bgfx.BGFX;
-import static org.lwjgl.bgfx.BGFX.BGFX_NATIVE_WINDOW_HANDLE_TYPE_WAYLAND;
-import static org.lwjgl.bgfx.BGFX.BGFX_RESET_VSYNC;
-import static org.lwjgl.bgfx.BGFX.bgfx_init;
-import static org.lwjgl.bgfx.BGFX.bgfx_init_ctor;
-import static org.lwjgl.bgfx.BGFX.bgfx_shutdown;
+import static org.lwjgl.bgfx.BGFX.*;
 import org.lwjgl.bgfx.BGFXInit;
 import org.lwjgl.glfw.GLFW;
-import static org.lwjgl.glfw.GLFW.GLFW_ALPHA_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_ARROW_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_AUTO_ICONIFY;
-import static org.lwjgl.glfw.GLFW.GLFW_BLUE_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_CLIENT_API;
-import static org.lwjgl.glfw.GLFW.GLFW_COCOA_RETINA_FRAMEBUFFER;
-import static org.lwjgl.glfw.GLFW.GLFW_CROSSHAIR_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_HIDDEN;
-import static org.lwjgl.glfw.GLFW.GLFW_CURSOR_NORMAL;
-import static org.lwjgl.glfw.GLFW.GLFW_DECORATED;
-import static org.lwjgl.glfw.GLFW.GLFW_DEPTH_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_DONT_CARE;
-import static org.lwjgl.glfw.GLFW.GLFW_FALSE;
-import static org.lwjgl.glfw.GLFW.GLFW_FLOATING;
-import static org.lwjgl.glfw.GLFW.GLFW_GREEN_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_HAND_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_HRESIZE_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_IBEAM_CURSOR;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_A;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_BACKSPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DELETE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_DOWN;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_ESCAPE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_GRAVE_ACCENT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_0;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_9;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ADD;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_DECIMAL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_DIVIDE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_ENTER;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_EQUAL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_MULTIPLY;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_KP_SUBTRACT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_ALT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_CONTROL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_ALT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_CONTROL;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_TAB;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_UP;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_Z;
-import static org.lwjgl.glfw.GLFW.GLFW_LOCK_KEY_MODS;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_CAPS_LOCK;
-import static org.lwjgl.glfw.GLFW.GLFW_MOD_SHIFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_LEFT;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_MIDDLE;
-import static org.lwjgl.glfw.GLFW.GLFW_MOUSE_BUTTON_RIGHT;
-import static org.lwjgl.glfw.GLFW.GLFW_NO_API;
-import static org.lwjgl.glfw.GLFW.GLFW_PLATFORM_COCOA;
-import static org.lwjgl.glfw.GLFW.GLFW_PLATFORM_WAYLAND;
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.GLFW_RED_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_REFRESH_RATE;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
-import static org.lwjgl.glfw.GLFW.GLFW_REPEAT;
-import static org.lwjgl.glfw.GLFW.GLFW_RESIZABLE;
-import static org.lwjgl.glfw.GLFW.GLFW_SAMPLES;
-import static org.lwjgl.glfw.GLFW.GLFW_STENCIL_BITS;
-import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
-import static org.lwjgl.glfw.GLFW.GLFW_VISIBLE;
-import static org.lwjgl.glfw.GLFW.glfwCreateStandardCursor;
-import static org.lwjgl.glfw.GLFW.glfwCreateWindow;
-import static org.lwjgl.glfw.GLFW.glfwDefaultWindowHints;
-import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
-import static org.lwjgl.glfw.GLFW.glfwGetFramebufferSize;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorContentScale;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorName;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitorPos;
-import static org.lwjgl.glfw.GLFW.glfwGetMonitors;
-import static org.lwjgl.glfw.GLFW.glfwGetPlatform;
-import static org.lwjgl.glfw.GLFW.glfwGetTimerFrequency;
-import static org.lwjgl.glfw.GLFW.glfwGetTimerValue;
-import static org.lwjgl.glfw.GLFW.glfwGetVersionString;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowContentScale;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowFrameSize;
-import static org.lwjgl.glfw.GLFW.glfwGetWindowSize;
-import static org.lwjgl.glfw.GLFW.glfwHideWindow;
-import static org.lwjgl.glfw.GLFW.glfwInit;
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-import static org.lwjgl.glfw.GLFW.glfwSetCursor;
-import static org.lwjgl.glfw.GLFW.glfwSetInputMode;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowAttrib;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowMonitor;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowSize;
-import static org.lwjgl.glfw.GLFW.glfwSetWindowTitle;
-import static org.lwjgl.glfw.GLFW.glfwShowWindow;
-import static org.lwjgl.glfw.GLFW.glfwTerminate;
-import static org.lwjgl.glfw.GLFW.glfwWindowHint;
+import static org.lwjgl.glfw.GLFW.*;
 import org.lwjgl.glfw.GLFWCharCallback;
 import org.lwjgl.glfw.GLFWCursorEnterCallback;
 import org.lwjgl.glfw.GLFWCursorPosCallback;
@@ -748,6 +649,7 @@ public class PSurfaceLWJGL implements PSurface {
     addWindowCallback(GLFW::glfwSetWindowRefreshCallback, GLFWWindowRefreshCallback
       .create(window1 -> {
         if (!sketch.isLooping()) {
+          initDrawBGFX();
           sketch.redraw();
         }
         if (DEBUG_GLFW) {
@@ -758,7 +660,19 @@ public class PSurfaceLWJGL implements PSurface {
           // window visible. Don't redraw from here before setup() ran.
           handleDraw();
         }
+        // BGFX.bgfx_frame(false); // this is not needed, called in handleDraw()
       }));
+  }
+
+  protected void initDrawBGFX() {
+      int viewId = 0;
+
+      BGFX.bgfx_dbg_text_clear(0, false);
+      int width = scaledSketch.windowToSketchUnits(frameBufferSize.w);
+      int height = scaledSketch.windowToSketchUnits(frameBufferSize.h);
+      // logInfo("Sketch size: " + width + " x " + height);
+      BGFX.bgfx_set_view_rect(viewId, 0, 0, width, height);
+      BGFX.bgfx_touch(viewId);
   }
 
 
@@ -1342,12 +1256,13 @@ public class PSurfaceLWJGL implements PSurface {
 
     if (!sketch.finished) {
       int pframeCount = sketch.frameCount;
+      initDrawBGFX();
       sketch.handleDraw();
       if (pframeCount != sketch.frameCount && !sketch.finished) {
         // Swap buffers only if drawing happened
         // glfwSwapBuffers(window);
+        // System.out.println("bgfx_frame()");
         BGFX.bgfx_frame(false);
-        // BGFX.bgfx_frame(true);
       }
       // TODO: PGraphicsOpenGL.completeFinishedPixelTransfers();
     }
