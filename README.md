@@ -2,7 +2,7 @@
 
 This is based on [processing-lwjgl](https://github.com/codeanticode/processing-lwjgl)
 
-NOTE: **WORK IN PROGRESS, NOT READY FOR USE** (and not maintained)
+NOTE: **WORK IN PROGRESS, NOT READY FOR USE** (and may not maintained)
 
 ### Current Status
 
