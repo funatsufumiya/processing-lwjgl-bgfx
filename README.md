@@ -2,7 +2,7 @@
 
 This is based on [processing-lwjgl](https://github.com/codeanticode/processing-lwjgl)
 
-NOTE: **WORK IN PROGRESS, NOT READY FOR USE** (and may not maintained)
+NOTE: **WORK IN PROGRESS, NOT READY FOR USE** (and may not maintained. If you want similar library as for now, please consider [minimax](https://github.com/funatsufumiya/minimax))
 
 ### Current Status
 
